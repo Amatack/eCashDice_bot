@@ -3,19 +3,20 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "devserver": "nodemon bot.js"
+    "devserver": "nodemon bot.js --ignore db.json"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.27.2",
     "dotenv": "^16.0.1",
+    "lowdb": "^3.0.0",
     "telegraf": "^4.8.6"
   },
   "devDependencies": {
     "nodemon": "^2.0.19"
   }
-  
 }

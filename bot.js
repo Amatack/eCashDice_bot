@@ -1,16 +1,19 @@
-require('dotenv').config()
-const { Telegraf } = require('telegraf')
-const axios = require('axios')
-const {on} = require('nodemon')
+import dotenv from 'dotenv'
+import { Telegraf } from 'telegraf'
+//const axios = require('axios')
+//import {on} from 'nodemon'
 
-function random(number){
-    return Math.ceil(Math.random() * number)
+import {createConnection} from './database.js'
+dotenv.config()
+
+const token = process.env.BOT_TOKEN
+if (token === undefined) {
+    throw new Error('BOT_TOKEN must be provided!')
 }
 
+createConnection()
 
-const bot = new Telegraf(process.env.BOT_TOKEN)
-
-
+const bot = new Telegraf(token)
 
 bot.start((ctx)=>{
     ctx.reply("Hola")
@@ -30,7 +33,5 @@ bot.command('random', (ctx) =>{
 //     ctx.reply(`Value: ${ctx.message}`)
 // })
 
-bot.launch();
+bot.launch()
 
-//process.once('SIGINT', () => bot.stop('SIGINT'))
-//process.once('SIGTERM', () => bot.stop('SIGTERM'))

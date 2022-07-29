@@ -9,11 +9,11 @@ export async function createConnection(){
     const file = join(__dirname, './db.json')
     const adapter = new JSONFile(file)
     db = new Low(adapter)
-    console.log(db)
+    //console.log(db)
     
     await db.read()
 
-    db.data ||= {Users: [], Ganadores: []}
+    db.data ||= {releases: [], winners: []}
 
     await db.write()
 }

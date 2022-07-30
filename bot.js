@@ -15,11 +15,11 @@ if (token === undefined) {
 createConnection()
 
 let TotalHours = 24
-let HoursLeft;
-taskSchedule(TotalHours, (Hours) => {
+taskSchedule(TotalHours, async (Hours) => {
     
-    //console.log(Hours)
-    return HoursLeft = Hours
+    const db = getConnection()
+    db.data.HoursLeft = Hours
+    await db.write()
 })
 
 //console.log(TotalHours)

@@ -13,7 +13,7 @@ export async function createConnection(){
     
     await db.read()
 
-    db.data ||= {releases: [], winners: []}
+    db.data ||= {releases: [], winners: [], HoursLeft: 24}
 
     await db.write()
 }

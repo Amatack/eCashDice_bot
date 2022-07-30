@@ -5,5 +5,5 @@ export function taskSchedule(Hours, callback){
             Hours = 24
         }
         callback(Hours)
-    }, 1000)
+    }, 3000)
 }

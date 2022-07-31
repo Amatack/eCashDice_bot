@@ -29,41 +29,65 @@ getTotalHours(HoursLeft, (Hours)=>{
         db.data.hoursLeft = Hours
         HoursLeft = Hours
         console.log(HoursLeft)
-        if(Hours === 20) db.data.releases = []
+        if(Hours === 15) db.data.releases = []
         await db.write()
     })
 })
 
 const db = getConnection()
 bot.on('dice', (ctx) => {
-    let stop = false
-    let value;
+    //Traducido como Lanzmientos de usuario en bd
+    let userReleasesInBd = 0
+    //Traducido sucessfulNumbersDice = Dados de numeros acertados
+    let sucessfulNumbersDice = 0
+    
+    let user;
     //GET
-    //const user = db.data.releases.filter(async (userLaunch) => await userLaunch.id === ctx.message.from.id);
+    
     for(let i = 0; i < db.data.releases.length; i++){
-        console.log(db.data.releases[i])
+        //console.log(db.data.releases[i])
         
-        value = db.data.releases[i]
+        //Obtienes ojetos del array releases
+        user = db.data.releases[i]
         
-        if(value.id === ctx.message.from.id){
-            stop = true
-            return
+        //Obtienes objetos que son lanzamientos del usuario que lanzo el dado
+        if(user.id === ctx.message.from.id){
+            
+            userReleasesInBd++
+
+            // Por cada dado en 1 acertado
+            if(user.value === 1){
+                sucessfulNumbersDice++
+            }
+
+            if(userReleasesInBd === 3){
+                return
+            }
         }
     }
-    if(ctx.message.dice.emoji === "🎲" && stop === false){
+    if(ctx.message.dice.emoji === "🎲" && userReleasesInBd < 3){
         const release = {
             id: ctx.message.from.id,
-            value: ctx.message.dice.value
+            value: ctx.message.dice.value,
         }
         try {
             //POST
             db.data.releases.push(release)
-            if(ctx.message.dice.value === 6){
-                setTimeout( () => ctx.reply("Congratulation!"), 4000 )
+            if(ctx.message.dice.value === 6 && userReleasesInBd < 1){
+                db.write()
+                setTimeout( () => ctx.reply("Congratulation!"), 3500 )
+                
+                return
             }
-            db.write()
+            
+            if(ctx.message.dice.value === 1 && sucessfulNumbersDice === 2){
+                db.write()
+                setTimeout( () => ctx.reply("Congratulation!"), 3500 )
+                return
+            }
+            
         } catch (error) {
-            console.log("Error al guardar en base de datos")
+            console.log("Error al guardar en base de datos ")
         }
     }
 })

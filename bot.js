@@ -11,7 +11,7 @@ const token = process.env.BOT_TOKEN
 if (token === undefined) {
     throw new Error('BOT_TOKEN must be provided!')
 }
-
+const bot = new Telegraf(token)
 createConnection()
 let HoursLeft = 24
 
@@ -19,60 +19,49 @@ const getTotalHours = async(Hours, callback) =>{
     const db = getConnection()
     await db.read()
     Hours = db.data.hoursLeft
-    
     callback(Hours)
 }
 
 getTotalHours(HoursLeft, (Hours)=>{
-    console.log(Hours)
     taskSchedule(Hours, async (Hours) => {
     
         const db = getConnection()
         db.data.hoursLeft = Hours
         HoursLeft = Hours
         console.log(HoursLeft)
-        if(Hours === 24) db.data.releases = []
+        if(Hours === 20) db.data.releases = []
         await db.write()
     })
 })
 
-
-
-const bot = new Telegraf(token)
-
-//bot.start(async (ctx)=>{
-    //await ctx.reply("Hola")
-//})
-
-//bot.command('random', async (ctx) =>{
-    //const db = getConnection()
-    //await ctx.reply(db.data.releases)
-    
-//})
-
-//bot.command('winners', async (ctx) =>{
-    //await ctx.replyWithDice({emoji:"🎯"})
-//} )
-
-bot.on('dice', async (ctx) => {
-    if(ctx.message.dice.emoji === "🎲"){
+const db = getConnection()
+bot.on('dice', (ctx) => {
+    let stop = false
+    let value;
+    //GET
+    //const user = db.data.releases.filter(async (userLaunch) => await userLaunch.id === ctx.message.from.id);
+    for(let i = 0; i < db.data.releases.length; i++){
+        console.log(db.data.releases[i])
+        
+        value = db.data.releases[i]
+        
+        if(value.id === ctx.message.from.id){
+            stop = true
+            return
+        }
+    }
+    if(ctx.message.dice.emoji === "🎲" && stop === false){
         const release = {
             id: ctx.message.from.id,
             value: ctx.message.dice.value
         }
-        //console.log(ctx.message.dice.value)
         try {
-
-            const db = getConnection()
-            //GET
-            const user = db.data.releases.filter(userLaunch => userLaunch.id === ctx.message.from.id);
             //POST
-            if(user.length < 2){
-                db.data.releases.push(release)
-                await db.write()
-            }else{
-                await ctx.reply("Oops, you have exceeded the maximum limit of daily releases, wait " + HoursLeft + "seconds to win")
+            db.data.releases.push(release)
+            if(ctx.message.dice.value === 6){
+                setTimeout( () => ctx.reply("Congratulation!"), 4000 )
             }
+            db.write()
         } catch (error) {
             console.log("Error al guardar en base de datos")
         }

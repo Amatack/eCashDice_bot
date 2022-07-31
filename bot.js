@@ -13,23 +13,30 @@ if (token === undefined) {
 }
 
 createConnection()
-let TotalHours = 24;
-//async function getTotalHours(){
-    //const db = getConnection()
-    //await db.read()
-    //TotalHours = db.data.hoursLeft
-//}
+let HoursLeft = 24
 
-//getTotalHours(TotalHours)
-taskSchedule(TotalHours, async (Hours) => {
-    
+const getTotalHours = async(Hours, callback) =>{
     const db = getConnection()
-    db.data.hoursLeft = Hours
-    TotalHours = Hours
+    await db.read()
+    Hours = db.data.hoursLeft
+    
+    callback(Hours)
+}
+
+getTotalHours(HoursLeft, (Hours)=>{
     console.log(Hours)
-    if(Hours === 24) db.data.releases = []
-    await db.write()
+    taskSchedule(Hours, async (Hours) => {
+    
+        const db = getConnection()
+        db.data.hoursLeft = Hours
+        HoursLeft = Hours
+        console.log(HoursLeft)
+        if(Hours === 24) db.data.releases = []
+        await db.write()
+    })
 })
+
+
 
 const bot = new Telegraf(token)
 
@@ -64,7 +71,7 @@ bot.on('dice', async (ctx) => {
                 db.data.releases.push(release)
                 await db.write()
             }else{
-                await ctx.reply("Oops, you have exceeded the maximum limit of daily releases, wait " + TotalHours + "seconds to win")
+                await ctx.reply("Oops, you have exceeded the maximum limit of daily releases, wait " + HoursLeft + "seconds to win")
             }
         } catch (error) {
             console.log("Error al guardar en base de datos")

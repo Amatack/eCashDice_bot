@@ -75,13 +75,13 @@ bot.on('dice', (ctx) => {
             db.data.releases.push(release)
             if(ctx.message.dice.value === 6 && userReleasesInBd < 1){
                 db.write()
-                setTimeout( () => ctx.reply("Congratulation!, You have earned grumpy tokens,@e_Koush or @Amatack or @NoExtrex will reward you"), 3500)
+                setTimeout( () => ctx.reply("🏅Congratulation!, You have earned grumpy tokens,@e_Koush or @Amatack or @NoExtrex will reward you"), 3500)
                 return
             }
             
             if(ctx.message.dice.value === 1 && sucessfulNumbersDice === 2){
                 db.write()
-                setTimeout( () => ctx.reply("Congratulation!, You've hit the jackpot,@e_Koush will reward you"), 3500)
+                setTimeout( () => ctx.reply("🥇Congratulation!, You've hit the jackpot,@e_Koush will reward you"), 3500)
                 return
             }
             

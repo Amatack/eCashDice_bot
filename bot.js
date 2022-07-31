@@ -35,6 +35,9 @@ getTotalHours(HoursLeft, (Hours)=>{
 })
 
 const db = getConnection()
+
+bot.command('HoursLeft', (ctx) => ctx.reply("In" + db.data.hoursLeft + "hours, Attempts reset to win"))
+
 bot.on('dice', (ctx) => {
     //Traducido como Lanzmientos de usuario en bd
     let userReleasesInBd = 0

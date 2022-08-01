@@ -78,7 +78,7 @@ bot.on('dice', (ctx) => {
             db.data.releases.push(release)
             if(ctx.message.dice.value === 6 && userReleasesInBd < 1){
                 db.write()
-                setTimeout( () => ctx.reply("🏅Congratulation!, You have earned grumpy tokens,@e_Koush or @Amatack or @NoExtrex will reward you"), 3500)
+                setTimeout( () => ctx.reply("🏅Congratulation!, You have earned grumpy tokens,@e_Koush or @Amatack or @NoExtrex will reward you, Reply with your etoken address, If you don't have an address create one at https://cashtab.com"), 3500)
                 return
             }
             

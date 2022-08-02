@@ -13,7 +13,8 @@ if (token === undefined) {
 }
 const bot = new Telegraf(token)
 createConnection()
-let HoursLeft = 24
+// Representa las 24 horas
+let HoursLeft = 28800000
 
 const getTotalHours = async(Hours, callback) =>{
     const db = getConnection()
@@ -26,17 +27,20 @@ getTotalHours(HoursLeft, (Hours)=>{
     taskSchedule(Hours, async (Hours) => {
     
         const db = getConnection()
+
         db.data.hoursLeft = Hours
+        // esto es una hora si divides sus ms totales / 3
+        // 1200000
         HoursLeft = Hours
         console.log(HoursLeft)
-        if(Hours === 24) db.data.releases = []
+        if(Hours === 28800000) db.data.releases = []
         await db.write()
     })
 })
 
 const db = getConnection()
 
-bot.command('hoursleft', (ctx) => ctx.reply("In " + db.data.hoursLeft + " hours, Attempts reset to win"))
+bot.command('hoursleft', (ctx) => ctx.reply("In " + Math.ceil(db.data.hoursLeft / 1200000) + " hours, Attempts reset to win"))
 
 bot.on('dice', (ctx) => {
     //Traducido como Lanzmientos de usuario en bd
@@ -78,8 +82,13 @@ bot.on('dice', (ctx) => {
             db.data.releases.push(release)
             if(ctx.message.dice.value === 6 && userReleasesInBd < 1){
                 db.write()
-                setTimeout( () => ctx.reply("🏅Congratulation!, You have earned grumpy tokens,@e_Koush or @Amatack or @NoExtrex will reward you, Reply with your etoken address, If you don't have an address create one at https://cashtab.com"), 3500)
+                setTimeout( () => ctx.reply(`🎲 Congratulations, you have rolled a Six (6) on your first roll.\n \n 
+                You didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens. \n \n 
+                👉 Reply to this message with your eToken:address and we will send you some Grumpy (GRP). \n \n 
+                ℹ️ If you don't have an eCash wallet that support eTokens, you create one at https://cashtab.com web-wallet.\n \n
+                ⚠️Note: After setting up your new wallet, please take the time to go to the ⚙️Settings menu to write down and store your 12 Word Seed Phrase. It acts as your Backup to your funds in case of loss of device. Keep this 12 Word Backup Phrase Safe and do not disclose it to anyone.`), 3500)
                 return
+                
             }
             
             if(ctx.message.dice.value === 1 && sucessfulNumbersDice === 2){

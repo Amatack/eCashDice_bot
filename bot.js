@@ -82,11 +82,7 @@ bot.on('dice', (ctx) => {
             db.data.releases.push(release)
             if(ctx.message.dice.value === 6 && userReleasesInBd < 1){
                 db.write()
-                setTimeout( () => ctx.reply(`🎲 Congratulations, you have rolled a Six (6) on your first roll.\n \n 
-                You didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens. \n \n 
-                👉 Reply to this message with your eToken:address and we will send you some Grumpy (GRP). \n \n 
-                ℹ️ If you don't have an eCash wallet that support eTokens, you create one at https://cashtab.com web-wallet.\n \n
-                ⚠️Note: After setting up your new wallet, please take the time to go to the ⚙️Settings menu to write down and store your 12 Word Seed Phrase. It acts as your Backup to your funds in case of loss of device. Keep this 12 Word Backup Phrase Safe and do not disclose it to anyone.`), 3500)
+                setTimeout( () => ctx.reply(`🎲 Congratulations, you have rolled a Six (6) on your first roll.\n \n You didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens. \n \n 👉 Reply to this message with your eToken:address and we will send you some Grumpy (GRP). \n \n ℹ️ If you don't have an eCash wallet that support eTokens, you create one at https://cashtab.com web-wallet.\n \n⚠️Note: After setting up your new wallet, please take the time to go to the ⚙️Settings menu to write down and store your 12 Word Seed Phrase. It acts as your Backup to your funds in case of loss of device. Keep this 12 Word Backup Phrase Safe and do not disclose it to anyone.`), 3500)
                 return
                 
             }

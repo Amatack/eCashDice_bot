@@ -13,11 +13,13 @@ const token = process.env.BOT_TOKEN
 if (token === undefined) {
     throw new Error('BOT_TOKEN must be provided!')
 }
+
+const idChat = process.env.ID_CHAT
 const bot = new Telegraf(token)
+
 createConnection()
 // Representa las 24 horas
 let HoursLeft = 28800
-
 
 const getTotalHours = async(Hours, callback) =>{
     const db = getConnection()
@@ -38,7 +40,10 @@ getTotalHours(HoursLeft, (Hours)=>{
         console.log(HoursLeft)
         //Solo me falta el id de la linea 37 lo demas está bien
         if(HoursLeft === 26400 || HoursLeft === 24000 || HoursLeft === 21600 || HoursLeft === 19200 || HoursLeft === 16800 || HoursLeft === 24000 || HoursLeft === 14400 || HoursLeft === 12000 || HoursLeft === 9600 || HoursLeft === 7200 || HoursLeft === 4800 || HoursLeft === 2400)  bot.telegram.sendMessage(-1001730725038, `In ${Math.ceil(db.data.hoursLeft / 1200)} hours Attempts reset to win`);
-        if(HoursLeft === 28800) db.data.releases = []
+        if(HoursLeft === 28800) {
+            bot.telegram.sendMessage(idChat, "⏳ Dice Timer has been reset! \n \n Everyone has a new try to get 3x1 (🎲 🎲🎲) for today. \n \n Good Luck🤞")
+            db.data.releases = []
+        }
         await db.write()
     })
 })

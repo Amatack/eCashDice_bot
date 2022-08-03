@@ -18,6 +18,33 @@ createConnection()
 // Representa las 24 horas
 let HoursLeft = 28800
 
+
+const getTotalHours = async(Hours, callback) =>{
+    const db = getConnection()
+    await db.read()
+    Hours = db.data.hoursLeft 
+    callback(Hours)
+}
+
+getTotalHours(HoursLeft, (Hours)=>{
+    taskSchedule(Hours, async (Hours) => {
+    
+        const db = getConnection()
+
+        db.data.hoursLeft = Hours
+        // esto es una hora si divides sus ms totales / 3
+        // 1200
+        HoursLeft = Hours
+        console.log(HoursLeft)
+        //Solo me falta el id de la linea 37 lo demas está bien
+        if(HoursLeft === 26400 || HoursLeft === 24000 || HoursLeft === 21600 || HoursLeft === 19200 || HoursLeft === 16800 || HoursLeft === 24000 || HoursLeft === 14400 || HoursLeft === 12000 || HoursLeft === 9600 || HoursLeft === 7200 || HoursLeft === 4800 || HoursLeft === 2400)  bot.telegram.sendMessage(-1001730725038, `In ${Math.ceil(db.data.hoursLeft / 1200)} hours Attempts reset to win`);
+        if(HoursLeft === 28800) db.data.releases = []
+        await db.write()
+    })
+})
+
+
+
 const db = getConnection()
 
 bot.command('hoursleft', (ctx) => ctx.reply(`In ` +  Math.ceil(db.data.hoursLeft / 1200) + " hours Attempts reset to win"))
@@ -101,31 +128,6 @@ bot.on('dice', (ctx) => {
         }
     }
 })
-
-const getTotalHours = async(Hours, callback) =>{
-    const db = getConnection()
-    await db.read()
-    Hours = db.data.hoursLeft 
-    callback(Hours)
-}
-
-getTotalHours(HoursLeft, (Hours)=>{
-    taskSchedule(Hours, async (Hours) => {
-    
-        const db = getConnection()
-
-        db.data.hoursLeft = Hours
-        // esto es una hora si divides sus ms totales / 3
-        // 1200
-        HoursLeft = Hours
-        console.log(HoursLeft)
-        //Solo me falta el id de la linea 37 lo demas está bien
-        //if(HoursLeft === 26400 || HoursLeft === 24000 || HoursLeft === 21600 || HoursLeft === 19200 || HoursLeft === 16800 || HoursLeft === 24000 || HoursLeft === 14400 || HoursLeft === 12000 || HoursLeft === 9600 || HoursLeft === 7200 || HoursLeft === 4800 || HoursLeft === 2400)  bot.telegram.sendMessage(12345678, `In ${Math.ceil(db.data.hoursLeft / 1200)} hours Attempts reset to win`);
-        if(HoursLeft === 28800) db.data.releases = []
-        await db.write()
-    })
-})
-
 
 
 bot.launch()

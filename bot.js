@@ -74,8 +74,6 @@ bot.command('z', () => {
     });
 })
 
-bot.command('idChat', (ctx) => ctx.reply(ctx.message.chat))
-
 bot.on('dice', (ctx) => {
     //Traducido como Lanzmientos de usuario en bd
     let userReleasesInBd = 0

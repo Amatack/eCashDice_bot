@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "devserver": "nodemon bot.js --ignore db.json"
+    "dev": "nodemon bot.js --ignore db.json"
   },
   "author": "",
   "license": "ISC",

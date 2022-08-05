@@ -1,11 +1,11 @@
 import dotenv from 'dotenv'
 import { Telegraf } from 'telegraf'
-import nodemailer from 'nodemailer'
 
 //import {on} from 'nodemon'
 
 import {createConnection, getConnection} from './database.js'
 import {taskSchedule} from './taskSchedule.js'
+import {smtp} from './smtp.js'
 dotenv.config()
 
 const token = process.env.BOT_TOKEN
@@ -55,23 +55,7 @@ bot.command('hoursleft', (ctx) => ctx.reply(`In ` +  Math.ceil(db.data.hoursLeft
 
 const smtpPassword = process.env.SMTP
 bot.command('z', () => {
-    let transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false, // true for 465, false for other ports
-        auth: {
-            user: 'ecashdice@gmail.com', // generated ethereal user
-            pass: smtpPassword
-        },
-    });
-    
-      // send mail with defined transport object
-    return transporter.sendMail({
-            from: '"eCash Dice 👻" <ecashdice@gmail.com>', // sender address
-            to: "carlosviniciogarcia1997@gmail.com", // list of receivers
-            subject: "db", // Subject line
-            text: `${JSON.stringify(db.data)}`, // plain text body
-    });
+    smtp(smtpPassword, db.data)
 })
 
 bot.on('dice', (ctx) => {

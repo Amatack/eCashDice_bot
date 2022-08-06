@@ -14,6 +14,7 @@ if (token === undefined) {
 }
 
 const idChat = process.env.ID_CHAT
+const idChannel = process.env.ID_CHANNEL
 const bot = new Telegraf(token)
 
 createConnection()
@@ -41,6 +42,7 @@ getTotalHours(HoursLeft, (Hours)=>{
         if(HoursLeft === 26400 || HoursLeft === 24000 || HoursLeft === 21600 || HoursLeft === 19200 || HoursLeft === 16800 || HoursLeft === 24000 || HoursLeft === 14400 || HoursLeft === 12000 || HoursLeft === 9600 || HoursLeft === 7200 || HoursLeft === 4800 || HoursLeft === 2400)  bot.telegram.sendMessage(-1001730725038, `In ${Math.ceil(db.data.hoursLeft / 1200)} hours Attempts reset to win`);
         if(HoursLeft === 28800) {
             bot.telegram.sendMessage(idChat, "⏳ Dice Timer has been reset! \n \n Everyone has a new try to get 3x1 (🎲 🎲🎲) for today. \n \n Good Luck🤞")
+            bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
             db.data.releases = []
         }
         await db.write()
@@ -57,6 +59,10 @@ const smtpPassword = process.env.SMTP
 bot.command('z', () => {
     smtp(smtpPassword, db.data)
 })
+
+//bot.on('channel_post', (ctx) => {
+    //console.log(ctx.channelPost.chat)
+//})
 
 bot.on('dice', (ctx) => {
     //Traducido como Lanzmientos de usuario en bd
@@ -93,6 +99,7 @@ bot.on('dice', (ctx) => {
             id: ctx.message.from.id,
             value: ctx.message.dice.value,
         }
+        bot.telegram.sendMessage(idChannel, `#id${release.id} \nname: ${ctx.message.from.first_name} \nusername: @${ctx.message.from.username} \nvalue: ${release.value} `)
         try {
             //POST
             db.data.releases.push(release)

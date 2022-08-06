@@ -112,7 +112,7 @@ bot.on('dice', (ctx) => {
             
             if(ctx.message.dice.value === 1 && sucessfulNumbersDice === 2){
                 db.write()
-                setTimeout( () => ctx.reply("🥇Congratulation!, You have won the top prize of 1 million @e_Koush will reward you"), 3000)
+                setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's top prize of 1.000.000 XEC🏅 \n \nPlease reply to this message with your eCash (XEC) wallet address and admin @e_Koush will reward you as soon as possible!"), 3000)
                 return
             }
             

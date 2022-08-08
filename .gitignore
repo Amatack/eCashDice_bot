@@ -1,2 +1,5 @@
+#Dependencies
+node_modules
+
 #machine-specific configuration files
 .env

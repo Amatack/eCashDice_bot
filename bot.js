@@ -60,9 +60,6 @@ bot.command('z', () => {
     smtp(smtpPassword, db.data)
 })
 
-//bot.on('channel_post', (ctx) => {
-    //console.log(ctx.channelPost.chat)
-//})
 
 bot.on('dice', (ctx) => {
     //Traducido como Lanzmientos de usuario en bd

@@ -62,6 +62,7 @@ bot.command('z', () => {
 
 
 bot.on('dice', (ctx) => {
+    //const {} = ctx.message
     //Traducido como Lanzmientos de usuario en bd
     let userReleasesInBd = 0
     //Traducido sucessfulNumbersDice = Dados de numeros acertados
@@ -91,7 +92,8 @@ bot.on('dice', (ctx) => {
             }
         }
     }
-    if(ctx.message.dice.emoji === "🎲" && userReleasesInBd < 3){
+
+    if(ctx.message.dice.emoji === "🎲" && userReleasesInBd < 3 && !ctx.message.forward_from && ctx.message.from.is_bot === false){
         const release = {
             id: ctx.message.from.id,
             value: ctx.message.dice.value,

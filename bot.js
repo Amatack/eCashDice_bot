@@ -34,12 +34,12 @@ let timeout = {
     twelfth: false
 }
 
-
+let timeLeft = new String
 
 const db = getConnection()
 setInterval(() => {
     everySecond(timeout,idChat, bot, async (now, timeoutTwelfth)=>{
-        
+        timeLeft = now
         if(now === "00:00" &&  timeoutTwelfth === false){
             
             bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
@@ -50,7 +50,21 @@ setInterval(() => {
 }, 1000)
 
 
-//bot.command('hoursleft', (ctx) => ctx.reply(`In ` +  timeLeft + " hours Attempts reset to win"))
+bot.command('hoursleft', (ctx) => {
+    let split = timeLeft.split(":")
+    split[0] = 23 - split[0]
+    split[1] = 60 - split[1]
+
+    if(split[1] === 60) {
+        split[1] = 0
+        split[0]++
+    }
+
+    if(split[0] < 10)  split[0] = "0" + split[0]
+    if(split[1] < 10)  split[1] = "0" + split[1]
+
+    ctx.reply(`In ` + split[0] + ":" + split[1] + " hours Attempts reset to win")
+})
 
 const smtpPassword = process.env.SMTP
 bot.command('z', () => {

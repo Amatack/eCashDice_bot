@@ -70,12 +70,10 @@ export function everySecond(timeout,idChat, bot, callback){
         timeout.tenth = false
         timeout.eleventh = true
     }
-    
-
+    callback(now, timeout.twelfth)
     if(now === "00:00" && timeout.twelfth === false) {
         bot.telegram.sendMessage(idChat, "⏳ Dice Timer has been reset! \n \n Everyone has a new try to get 3x1 (🎲 🎲🎲) for today. \n \n Good Luck🤞")
         timeout.eleventh = false
-        callback(now, timeout.twelfth)
         timeout.twelfth = true
     }
 }

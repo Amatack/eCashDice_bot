@@ -4,8 +4,8 @@ import { Telegraf } from 'telegraf'
 //import {on} from 'nodemon'
 
 import {createConnection, getConnection} from './database.js'
-//import {everySecond} from './everySecond.js'
-//import {smtp} from './smtp.js'
+import {everySecond} from './everySecond.js'
+import {smtp} from './smtp.js'
 dotenv.config()
 
 const token = process.env.BOT_TOKEN
@@ -37,29 +37,17 @@ let timeout = {
 
 
 const db = getConnection()
-/*setInterval(() => {
+setInterval(() => {
     everySecond(timeout,idChat, bot, async (now, timeoutTwelfth)=>{
         
-        if(now === "07:33" &&  timeoutTwelfth === false){
+        if(now === "00:00" &&  timeoutTwelfth === false){
             
             bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
             db.data.releases = []
             await db.write()
         }
     })
-}, 1000)*/
-
-
-//everySecond(Hours, async (Hours) => {
-
-    //if(HoursLeft === 26400 || HoursLeft === 24000 || HoursLeft === 21600 || HoursLeft === 19200 || HoursLeft === 16800 || HoursLeft === 24000 || HoursLeft === 14400 || HoursLeft === 12000 || HoursLeft === 9600 || HoursLeft === 7200 || HoursLeft === 4800 || HoursLeft === 2400)  bot.telegram.sendMessage(idChat, `In ${Math.ceil(db.data.hoursLeft / 1200)} hours Attempts reset to win`);
-    //if(HoursLeft === 28800) {
-        //bot.telegram.sendMessage(idChat, "⏳ Dice Timer has been reset! \n \n Everyone has a new try to get 3x1 (🎲 🎲🎲) for today. \n \n Good Luck🤞")
-        //bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
-        //db.data.releases = []
-    //}
-    //await db.write()
-//})
+}, 1000)
 
 
 //bot.command('hoursleft', (ctx) => ctx.reply(`In ` +  timeLeft + " hours Attempts reset to win"))

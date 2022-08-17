@@ -95,8 +95,8 @@ bot.on('dice', async (ctx) => {
             }
         }
     }
-//&& !forward_from
-    if(dice.emoji === "🎲" && userReleasesInBd < 3  && from.is_bot === false){
+
+    if(dice.emoji === "🎲" && userReleasesInBd < 3 && !forward_from && from.is_bot === false){
         const release = {
             id: from.id,
             value: dice.value,

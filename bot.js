@@ -1,10 +1,9 @@
 import dotenv from 'dotenv'
 import { Telegraf } from 'telegraf'
 
-//import {on} from 'nodemon'
-
 import {createConnection, getConnection} from './database.js'
 import {everySecond} from './everySecond.js'
+import { hoursLeft } from './hoursLeft.js'
 import {smtp} from './smtp.js'
 dotenv.config()
 
@@ -51,18 +50,7 @@ setInterval(() => {
 
 
 bot.command('hoursleft', (ctx) => {
-    let split = timeLeft.split(":")
-    split[0] = 23 - split[0]
-    split[1] = 60 - split[1]
-
-    if(split[1] === 60) {
-        split[1] = 0
-        split[0]++
-    }
-
-    if(split[0] < 10)  split[0] = "0" + split[0]
-    if(split[1] < 10)  split[1] = "0" + split[1]
-
+    let split = hoursLeft(timeLeft)
     ctx.reply(`In ` + split[0] + ":" + split[1] + " hours Attempts reset to win")
 })
 

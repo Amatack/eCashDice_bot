@@ -59,9 +59,41 @@ bot.command('z', () => {
     smtp(smtpPassword, db.data)
 })
 
-//bot.on('message', (ctx) =>{
-    //console.log(ctx.message.from)
-//})
+bot.on('text', (ctx) =>{
+    const winner = {
+        address: new String
+    }
+    const word = "etoken:"
+    //let positionWinner = new Number
+    for(let i = 0; i < db.data.winners.length; i++){
+        if(db.data.winners[i].id === ctx.message.from.id){
+            let split = ctx.message.text.split(" ")
+            split.forEach(async (element) => {
+                if(element.length === 49 && element.includes(word)){
+                    console.log(element)
+                    winner.address = element
+                    db.data.winners[i] = winner
+                    await db.write()
+                    
+                }
+                
+            });
+            
+            
+        }
+    }
+    //if(split.length > 0){
+        //for(let n = 0; n < split.length; n++){
+            //if(split[n].length === 3 ){
+                //winner.address = split[n]
+                
+                //await db.write()
+               //console.log("inserción en db")
+            //}
+        //}
+    //}
+    return
+})
 
 bot.on('dice', async (ctx) => {
     
@@ -102,8 +134,7 @@ bot.on('dice', async (ctx) => {
             value: dice.value,
         }
         const winner = {
-            id: from.id,
-            address: "etoken:"
+            id: from.id
         }
         bot.telegram.sendMessage(idChannel, `#id${release.id} \nname: ${from.first_name} \nusername: @${from.username} \nvalue: ${release.value} `)
         try {

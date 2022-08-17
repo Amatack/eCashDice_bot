@@ -59,6 +59,10 @@ bot.command('z', () => {
     smtp(smtpPassword, db.data)
 })
 
+//bot.on('message', (ctx) =>{
+    //console.log(ctx.message.from)
+//})
+
 bot.on('dice', async (ctx) => {
     
     const {dice, forward_from, from } = ctx.message
@@ -91,11 +95,15 @@ bot.on('dice', async (ctx) => {
             }
         }
     }
-
-    if(dice.emoji === "🎲" && userReleasesInBd < 3 && !forward_from && from.is_bot === false){
+//&& !forward_from
+    if(dice.emoji === "🎲" && userReleasesInBd < 3  && from.is_bot === false){
         const release = {
             id: from.id,
             value: dice.value,
+        }
+        const winner = {
+            id: from.id,
+            address: "etoken:"
         }
         bot.telegram.sendMessage(idChannel, `#id${release.id} \nname: ${from.first_name} \nusername: @${from.username} \nvalue: ${release.value} `)
         try {
@@ -103,6 +111,7 @@ bot.on('dice', async (ctx) => {
             db.data.releases.push(release)
             if(dice.value === 6 && userReleasesInBd < 1){
                 setTimeout(() => ctx.reply("🎲 Congratulations, you have rolled a Six (6) on your first roll. \n \n You didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens. \n \n 👉 Reply to this message with your eToken:address and we will send you some Grumpy (GRP). \n \n ℹ️ If you don't have an eCash wallet that support eTokens, you can create one at https://cashtab.com web-wallet. \n \n ⚠️Note: After setting up your new wallet, please take the time to go to the ⚙️Settings menu to write down and store your 12 Word Seed Phrase. It acts as your Backup to your funds in case of loss of device. Keep this 12 Word Backup Phrase Safe and do not disclose it to anyone."), 3000)
+                db.data.winners.push(winner)
             }
             
             if(dice.value === 1 && sucessfulNumbersDice === 2){

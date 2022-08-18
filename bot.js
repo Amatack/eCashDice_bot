@@ -36,13 +36,15 @@ let timeout = {
 let timeLeft = new String
 
 const db = getConnection()
+const smtpPassword = process.env.SMTP
 setInterval(() => {
     everySecond(timeout,idChat, bot, async (now, timeoutTwelfth)=>{
         timeLeft = now
         if(now === "00:00" &&  timeoutTwelfth === false){
-            
+            await smtp(smtpPassword, db.data)
             bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
             db.data.releases = []
+            db.data.winners = []
             await db.write()
         }
     })
@@ -54,7 +56,7 @@ bot.command('hoursleft', (ctx) => {
     ctx.reply(`In ` + split[0] + ":" + split[1] + " hours Attempts reset to win")
 })
 
-const smtpPassword = process.env.SMTP
+
 bot.command('z', () => {
     smtp(smtpPassword, db.data)
 })
@@ -79,20 +81,8 @@ bot.on('text', (ctx) =>{
                 
             });
             
-            
         }
     }
-    //if(split.length > 0){
-        //for(let n = 0; n < split.length; n++){
-            //if(split[n].length === 3 ){
-                //winner.address = split[n]
-                
-                //await db.write()
-               //console.log("inserción en db")
-            //}
-        //}
-    //}
-    return
 })
 
 bot.on('dice', async (ctx) => {

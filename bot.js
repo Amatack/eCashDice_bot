@@ -41,7 +41,7 @@ setInterval(() => {
     everySecond(timeout,idChat, bot, async (now, timeoutTwelfth)=>{
         timeLeft = now
         if(now === "00:00" &&  timeoutTwelfth === false){
-            await smtp(smtpPassword, db.data)
+            await smtp(smtpPassword, db.data.winners)
             bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
             db.data.releases = []
             db.data.winners = []
@@ -136,7 +136,7 @@ bot.on('dice', async (ctx) => {
             }
             
             if(dice.value === 1 && sucessfulNumbersDice === 2){
-                setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's top prize of 1.000.000 XEC🏅 \n \nPlease reply to this message with your eCash (XEC) wallet address and admin @e_Koush will reward you as soon as possible!"), 3000)
+                setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's top prize of 500.000 XEC🏅 \n \nPlease reply to this message with your eCash (XEC) wallet address and admin @e_Koush will reward you as soon as possible!"), 3000)
             }
             await db.write()
             

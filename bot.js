@@ -53,7 +53,7 @@ setInterval(() => {
 
 bot.command('hoursleft', (ctx) => {
     let split = hoursLeft(timeLeft)
-    ctx.reply(`In ` + split[0] + ":" + split[1] + " hours Attempts reset to win")
+    ctx.reply(`In ` + split[0] + ":" + split[1] + " hours attempts reset to win")
 })
 
 

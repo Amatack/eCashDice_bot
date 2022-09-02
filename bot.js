@@ -51,7 +51,7 @@ setInterval(() => {
 }, 1000)
 
 
-bot.command('hoursleft', (ctx) => {
+bot.command('time', (ctx) => {
     let split = hoursLeft(timeLeft)
     ctx.reply(`In ` + split[0] + ":" + split[1] + " hours attempts reset to win")
 })
@@ -136,7 +136,7 @@ bot.on('dice', async (ctx) => {
             }
             
             if(dice.value === 1 && sucessfulNumbersDice === 2){
-                setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's top prize of 500.000 XEC🏅 \n \nPlease reply to this message with your eCash (XEC) wallet address and admin @e_Koush will reward you as soon as possible!"), 3000)
+                setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's top prize of 250.000 XEC🏅 \n \nPlease reply to this message with your eCash (XEC) wallet address and admin @e_Koush will reward you as soon as possible!"), 3000)
             }
             await db.write()
             

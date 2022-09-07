@@ -41,7 +41,9 @@ setInterval(() => {
     everySecond(timeout,idChat, bot, async (now, timeoutTwelfth)=>{
         timeLeft = now
         if(now === "00:00" &&  timeoutTwelfth === false){
-            await smtp(smtpPassword, db.data.winners)
+            let messageEmail = new String
+            db.data.winners.forEach(element => {if(element.address) (messageEmail = messageEmail + " " + element.address)})
+            await smtp(smtpPassword, messageEmail)
             bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
             db.data.releases = []
             db.data.winners = []
@@ -130,10 +132,10 @@ bot.on('dice', async (ctx) => {
         try {
             //POST
             db.data.releases.push(release)
-            //if(dice.value === 6 && userReleasesInBd < 1){
-                //setTimeout(() => ctx.reply("🎲 Congratulations, you have rolled a Six (6) on your first roll. \n \n You didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens. \n \n 👉 Reply to this message with your eToken:address and we will send you some Grumpy (GRP). \n \n ℹ️ If you don't have an eCash wallet that support eTokens, you can create one at https://cashtab.com web-wallet. \n \n ⚠️Note: After setting up your new wallet, please take the time to go to the ⚙️Settings menu to write down and store your 12 Word Seed Phrase. It acts as your Backup to your funds in case of loss of device. Keep this 12 Word Backup Phrase Safe and do not disclose it to anyone."), 3000)
-                //db.data.winners.push(winner)
-            //}
+            if(dice.value === 6 && userReleasesInBd < 1){
+                setTimeout(() => ctx.reply("🎲 Congratulations, you have rolled a Six (6) on your first roll. \n \n You didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens. \n \n 👉 Reply to this message with your eToken:address and we will send you some Grumpy (GRP). \n \n ℹ️ If you don't have an eCash wallet that support eTokens, you can create one at https://cashtab.com web-wallet. \n \n ⚠️Note: After setting up your new wallet, please take the time to go to the ⚙️Settings menu to write down and store your 12 Word Seed Phrase. It acts as your Backup to your funds in case of loss of device. Keep this 12 Word Backup Phrase Safe and do not disclose it to anyone."), 3000)
+                db.data.winners.push(winner)
+            }
             
             if(dice.value === 1 && sucessfulNumbersDice === 2){
                 setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's top prize of 250.000 XEC🏅 \n \nPlease reply to this message with your eCash (XEC) wallet address and admin @e_Koush will reward you as soon as possible!"), 3000)

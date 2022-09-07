@@ -1,4 +1,33 @@
 {
-  "releases": [],
-  "winners": []
+  "releases": [
+    {
+      "id": 910668067,
+      "value": 1
+    },
+    {
+      "id": 910668067,
+      "value": 1
+    },
+    {
+      "id": 910668067,
+      "value": 2
+    },
+    {
+      "id": 5325282836,
+      "value": 1
+    },
+    {
+      "id": 5325282836,
+      "value": 1
+    },
+    {
+      "id": 5325282836,
+      "value": 1
+    }
+  ],
+  "winners": [
+    {
+      "address": "etoken:qrhvzuhz6z7zcgnw29c3ujtm6gtd6r4pzsurc7rfxf"
+    }
+  ]
 }

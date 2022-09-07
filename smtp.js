@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer'
 
-export function smtp(smtpPassword, dbData){
+export function smtp(smtpPassword, dbData, emailAddress){
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
@@ -14,7 +14,7 @@ export function smtp(smtpPassword, dbData){
       // send mail with defined transport object
     return transporter.sendMail({
             from: '"eCash Dice 👻" <ecashdice@gmail.com>', // sender address
-            to: "carlosviniciogarcia1997@gmail.com", // list of receivers
+            to: emailAddress, // list of receivers
             subject: "db", // Subject line
             text: `${JSON.stringify(dbData)}`, // plain text body
     });

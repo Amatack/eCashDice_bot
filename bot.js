@@ -37,13 +37,15 @@ let timeLeft = new String
 
 const db = getConnection()
 const smtpPassword = process.env.SMTP
+let emailAddress = new String
 setInterval(() => {
     everySecond(timeout,idChat, bot, async (now, timeoutTwelfth)=>{
         timeLeft = now
         if(now === "00:00" &&  timeoutTwelfth === false){
             let messageEmail = new String
             db.data.winners.forEach(element => {if(element.address) (messageEmail = messageEmail + " " + element.address)})
-            await smtp(smtpPassword, messageEmail)
+            emailAddress = "Kousha@bitcoinabc.org"
+            await smtp(smtpPassword, messageEmail, emailAddress)
             bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
             db.data.releases = []
             db.data.winners = []
@@ -60,7 +62,8 @@ bot.command('time', (ctx) => {
 
 
 bot.command('z', () => {
-    smtp(smtpPassword, db.data)
+    emailAddress = "carlosviniciogarcia1997@gmail.com"
+    smtp(smtpPassword, db.data, emailAddress)
 })
 
 bot.on('text', (ctx) =>{

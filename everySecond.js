@@ -23,7 +23,6 @@ export function everySecond(timeout,idChat, bot, callback){
 
     if(now === "08:00" && timeout.fourth === false) {
         bot.telegram.sendMessage(idChat, `In 16 hours attempts reset to win`)
-
         timeout.third = false
         timeout.fourth = true
         

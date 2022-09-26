@@ -1,21 +1,18 @@
-import { Low, JSONFile } from 'lowdb'
-import { join, dirname} from 'path'
-import {fileURLToPath} from 'url'
+import mongoose from 'mongoose'
 
-let db;
-const __dirname = dirname(fileURLToPath(import.meta.url))
-
-export async function createConnection(){
-    const file = join(__dirname, './db.json')
-    const adapter = new JSONFile(file)
-    db = new Low(adapter)
-    //console.log(db)
-    
-    await db.read()
-
-    db.data ||= {releases: [], winners:[]}
-
-    await db.write()
+const dbConnect = () => {
+    const DB_URI = process.env.DB_URI || "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false"
+    mongoose.connect(DB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    },(err, res)=>{
+        if(!err){
+            console.log("Successful connection to database")
+        }else{
+            console.log("Incorrect connection to database")
+        }
+    }
+    )
 }
 
-export const getConnection = () => db
+export default dbConnect

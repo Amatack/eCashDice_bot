@@ -1,10 +1,15 @@
 import dotenv from 'dotenv'
 import { Telegraf } from 'telegraf'
+import mongoose from 'mongoose'
 
+import dbConnect from './database.js'
 import {createConnection, getConnection} from './database.js'
 import {everySecond} from './everySecond.js'
 import { hoursLeft } from './hoursLeft.js'
 import {smtp} from './smtp.js'
+import Release from './models/Release.js'
+import Winner from './models/Winner.js'
+
 dotenv.config()
 
 const token = process.env.BOT_TOKEN
@@ -17,7 +22,7 @@ const idChannel = process.env.ID_CHANNEL
 const bot = new Telegraf(token)
 
 createConnection()
-// Representa las 24 horas
+// Represents 24 hours
 let timeout = {
     first: false,
     second: false,
@@ -35,7 +40,6 @@ let timeout = {
 
 let timeLeft = new String
 
-const db = getConnection()
 const smtpPassword = process.env.SMTP
 let emailAddress = new String
 setInterval(() => {
@@ -43,13 +47,14 @@ setInterval(() => {
         timeLeft = now
         if(now === "00:00" &&  timeoutTwelfth === false){
             let messageEmail = new String
-            db.data.winners.forEach(element => {if(element.address) (messageEmail = messageEmail + " " + element.address)})
-            emailAddress = "Kousha@bitcoinabc.org"
+            //db.data.winners.forEach(element => {if(element.address) (messageEmail = messageEmail + " " + element.address)})
+            //emailAddress = "Kousha@bitcoinabc.org"
+            emailAddress = "carlosviniciogarcia1997@gmail.com"
             await smtp(smtpPassword, messageEmail, emailAddress)
             bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
-            db.data.releases = []
-            db.data.winners = []
-            await db.write()
+
+            mongoose.deleteModel('releases')
+            mongoose.deleteModel('winners')
         }
     })
 }, 1000)
@@ -156,6 +161,6 @@ bot.on('dice', async (ctx) => {
     }
 })
 
-
+dbConnect()
 bot.launch()
 

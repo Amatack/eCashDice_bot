@@ -1,8 +1,9 @@
 import mongoose from 'mongoose'
 
 const dbConnect = () => {
-    const DB_URI = process.env.DB_URI || "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false"
+    const DB_URI = process.env.DB_URI || "mongodb://localhost:27017/eCashDice"
     mongoose.connect(DB_URI, {
+        dbName: "eCashDice",
         useNewUrlParser: true,
         useUnifiedTopology: true
     },(err, res)=>{

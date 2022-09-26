@@ -1,6 +1,5 @@
 import dotenv from 'dotenv'
 import { Telegraf } from 'telegraf'
-import mongoose from 'mongoose'
 
 import dbConnect from './database.js'
 import {everySecond} from './everySecond.js'
@@ -43,17 +42,16 @@ let emailAddress = new String
 setInterval(() => {
     everySecond(timeout,idChat, bot, async (now, timeoutTwelfth)=>{
         timeLeft = now
-        if(now === "22:46" &&  timeoutTwelfth === false){
+        if(now === "00:00" &&  timeoutTwelfth === false){
             let messageEmail = new String
             const winners = await Winner.find()
             winners.forEach(element => {if(element.address) (messageEmail = messageEmail + " " + element.address)})
             //emailAddress = "Kousha@bitcoinabc.org"
             emailAddress = "carlosviniciogarcia1997@gmail.com"
             await smtp(smtpPassword, messageEmail, emailAddress)
+            await Winner.deleteMany({})
+            await Release.deleteMany({})
             bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
-
-            //mongoose.deleteModel('releases')
-            //mongoose.deleteModel('winners')
         }
     })
 }, 1000)
@@ -65,19 +63,10 @@ bot.command('time', (ctx) => {
 })
 
 
-bot.command('z', () => {
-    emailAddress = "carlosviniciogarcia1997@gmail.com"
-    smtp(smtpPassword, db.data, emailAddress)
-})
-
 bot.on('text', async (ctx) =>{
 
     const { from } = ctx.message
-    const newWinner = new Winner(
-        {
-            idT: from.id,
-            address: new String
-        })
+    
     const word = "etoken:"
     const winners = await Winner.find()
     for(let i = 0; i < winners.length; i++){
@@ -85,9 +74,7 @@ bot.on('text', async (ctx) =>{
             let split = ctx.message.text.split(" ")
             split.forEach(async (element) => {
                 if(element.length === 49 && element.includes(word)){
-                    //console.log(element)
-                    newWinner._id = winners[i]._id
-
+                    
                     await Winner.findOneAndUpdate(
                         { idT: from.id }
                         ,{ $set: { address: element } },
@@ -133,8 +120,8 @@ bot.on('dice', async (ctx) => {
             }
         }
     }
-    // without: && !forward_from
-    if(dice.emoji === "🎲" && userReleasesInBd < 3  && from.is_bot === false){
+    // without: && !forward_from. for tests 
+    if(dice.emoji === "🎲" && userReleasesInBd < 3 && !forward_from && from.is_bot === false){
 
         const newRelease = new Release(
             {
@@ -168,7 +155,7 @@ bot.on('dice', async (ctx) => {
             await newRelease.save()
             
         } catch (error) {
-            console.log("Error al guardar en base de datos ")
+            console.log("Error saving to database")
         }
     }
 })

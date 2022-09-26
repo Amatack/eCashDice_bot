@@ -3,7 +3,6 @@ import { Telegraf } from 'telegraf'
 import mongoose from 'mongoose'
 
 import dbConnect from './database.js'
-import {createConnection, getConnection} from './database.js'
 import {everySecond} from './everySecond.js'
 import { hoursLeft } from './hoursLeft.js'
 import {smtp} from './smtp.js'
@@ -21,7 +20,6 @@ const idChat = process.env.ID_CHAT
 const idChannel = process.env.ID_CHANNEL
 const bot = new Telegraf(token)
 
-createConnection()
 // Represents 24 hours
 let timeout = {
     first: false,
@@ -98,7 +96,7 @@ bot.on('text', (ctx) =>{
 bot.on('dice', async (ctx) => {
     
     const {dice, forward_from, from } = ctx.message
-    //Traducido como Lanzmientos de usuario en bd
+    //Traducido como Lanzamientos de usuario en bd
     let userReleasesInBd = 0
     //Traducido sucessfulNumbersDice = Dados de numeros acertados
     let sucessfulNumbersDice = 0
@@ -106,18 +104,19 @@ bot.on('dice', async (ctx) => {
     let user;
     //GET
     
-    for(let i = 0; i < db.data.releases.length; i++){
-        //console.log(db.data.releases[i])
+    const releases = await Release.find()
+    console.log("releases",releases)
+
+    for(let i = 0; i < releases.length; i++){
         
-        //Obtienes ojetos del array releases
-        user = db.data.releases[i]
+        //you get objects
+        user = releases[i]
         
-        //Obtienes objetos que son lanzamientos del usuario que lanzo el dado
-        if(user.id === from.id){
+        if(user.idT === from.id){
             
             userReleasesInBd++
 
-            // Por cada dado en 1 acertado
+            //For each die in 1
             if(user.value === 1){
                 sucessfulNumbersDice++
             }
@@ -127,22 +126,27 @@ bot.on('dice', async (ctx) => {
             }
         }
     }
+    // without: && !forward_from
+    if(dice.emoji === "🎲" && userReleasesInBd < 3  && from.is_bot === false){
 
-    if(dice.emoji === "🎲" && userReleasesInBd < 3 && !forward_from && from.is_bot === false){
-        const release = {
-            id: from.id,
-            value: dice.value,
-        }
-        const winner = {
-            id: from.id
-        }
-        bot.telegram.sendMessage(idChannel, `#id${release.id} \nname: ${from.first_name} \nusername: @${from.username} \nvalue: ${release.value} `)
+        const newRelease = new Release(
+            {
+                idT: from.id,
+                value: dice.value,
+            })
+        
+        const newWinner = new Winner(
+            {
+                idT: from.id
+            })
+
+        bot.telegram.sendMessage(idChannel, `#id${from.id} \nname: ${from.first_name} \nusername: @${from.username} \nvalue: ${dice.value} `)
         try {
             //POST
-            db.data.releases.push(release)
+            
             //if(dice.value === 6 && userReleasesInBd < 1){
                 //setTimeout(() => ctx.reply("🎲 Congratulations, you have rolled a Six (6) on your first roll. \n \n You didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens. \n \n 👉 Reply to this message with your eToken:address and we will send you some Grumpy (GRP). \n \n ℹ️ If you don't have an eCash wallet that support eTokens, you can create one at https://cashtab.com web-wallet. \n \n ⚠️Note: After setting up your new wallet, please take the time to go to the ⚙️Settings menu to write down and store your 12 Word Seed Phrase. It acts as your Backup to your funds in case of loss of device. Keep this 12 Word Backup Phrase Safe and do not disclose it to anyone."), 3000)
-                //db.data.winners.push(winner)
+                //await newWinner.save()
             //}
             
             if(sucessfulNumbersDice === 2){
@@ -150,10 +154,11 @@ bot.on('dice', async (ctx) => {
                 setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's top prize of 250.000 XEC🏅 \n \nPlease reply to this message with your eCash (XEC) wallet address and admin @e_Koush will reward you as soon as possible!"), 3000)
                 }else{
                     setTimeout(() => ctx.reply("🎲 Aww, almost! \n \nYou didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens, instead! \n \n👉 Reply with your eToken:address and we will send you some Grumpy (GRP). \n \nℹ️ If you don't have an eCash wallet that support eTokens, you can create one at https://cashtab.com web-wallet. \n \n⚠️Note: After setting up your new wallet, please take the time to go to the ⚙️Settings menu to write down and store your 12 Word Seed Phrase. It acts as your Backup to your funds in case of loss of device. Keep this 12 Word Backup Phrase Safe and do not disclose it to anyone."), 3000)
-                    db.data.winners.push(winner)
+                    await newWinner.save()
                 }
             }
-            await db.write()
+            
+            await newRelease.save()
             
         } catch (error) {
             console.log("Error al guardar en base de datos ")

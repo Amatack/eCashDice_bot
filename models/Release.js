@@ -2,7 +2,7 @@ import {Schema, model} from "mongoose";
 
 const ReleaseScheme = new Schema(
     {
-        id:{
+        idT:{
             type: Number,
             required:  true,
             trim: true

@@ -2,7 +2,7 @@ import {Schema, model} from "mongoose";
 
 const WinnersScheme = new Schema(
     {
-        id:{
+        idT:{
             type: Number,
             required:  true,
             trim: true

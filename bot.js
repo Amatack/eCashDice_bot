@@ -38,7 +38,7 @@ let timeout = {
 let timeLeft = new String
 
 const smtpPassword = process.env.SMTP
-let emailAddress = new String
+const emailAddress = process.env.EMAIL
 setInterval(() => {
     everySecond(timeout,idChat, bot, async (now, timeoutTwelfth)=>{
         timeLeft = now
@@ -46,8 +46,6 @@ setInterval(() => {
             let messageEmail = new String
             const winners = await Winner.find()
             winners.forEach(element => {if(element.address) (messageEmail = messageEmail + " " + element.address)})
-            //emailAddress = "Kousha@bitcoinabc.org"
-            emailAddress = "carlosviniciogarcia1997@gmail.com"
             await smtp(smtpPassword, messageEmail, emailAddress)
             await Winner.deleteMany({})
             await Release.deleteMany({})

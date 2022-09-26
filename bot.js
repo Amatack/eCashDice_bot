@@ -69,21 +69,24 @@ bot.command('z', () => {
     smtp(smtpPassword, db.data, emailAddress)
 })
 
-bot.on('text', (ctx) =>{
-    const winner = {
-        address: new String
-    }
+bot.on('text', async (ctx) =>{
+
+    const { from } = ctx.message
+    const newWinner = new Winner(
+        {
+            idT: from.id
+        })
     const word = "etoken:"
-    //let positionWinner = new Number
-    for(let i = 0; i < db.data.winners.length; i++){
-        if(db.data.winners[i].id === ctx.message.from.id){
+    const winners = await Winner.find()
+    for(let i = 0; i < winners.length; i++){
+        if(winners[i].idT === from.id){
             let split = ctx.message.text.split(" ")
             split.forEach(async (element) => {
                 if(element.length === 49 && element.includes(word)){
                     //console.log(element)
-                    winner.address = element
-                    db.data.winners[i] = winner
-                    await db.write()
+                    newWinner._id = winners[i]._id
+                    newWinner.address = element
+                    await Winner.findOneAndUpdate(winners[i].idT, newWinner)
                     
                 }
                 
@@ -105,7 +108,6 @@ bot.on('dice', async (ctx) => {
     //GET
     
     const releases = await Release.find()
-    console.log("releases",releases)
 
     for(let i = 0; i < releases.length; i++){
         

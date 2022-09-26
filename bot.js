@@ -43,16 +43,17 @@ let emailAddress = new String
 setInterval(() => {
     everySecond(timeout,idChat, bot, async (now, timeoutTwelfth)=>{
         timeLeft = now
-        if(now === "00:00" &&  timeoutTwelfth === false){
+        if(now === "22:46" &&  timeoutTwelfth === false){
             let messageEmail = new String
-            //db.data.winners.forEach(element => {if(element.address) (messageEmail = messageEmail + " " + element.address)})
+            const winners = await Winner.find()
+            winners.forEach(element => {if(element.address) (messageEmail = messageEmail + " " + element.address)})
             //emailAddress = "Kousha@bitcoinabc.org"
             emailAddress = "carlosviniciogarcia1997@gmail.com"
             await smtp(smtpPassword, messageEmail, emailAddress)
             bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
 
-            mongoose.deleteModel('releases')
-            mongoose.deleteModel('winners')
+            //mongoose.deleteModel('releases')
+            //mongoose.deleteModel('winners')
         }
     })
 }, 1000)
@@ -74,7 +75,8 @@ bot.on('text', async (ctx) =>{
     const { from } = ctx.message
     const newWinner = new Winner(
         {
-            idT: from.id
+            idT: from.id,
+            address: new String
         })
     const word = "etoken:"
     const winners = await Winner.find()
@@ -85,8 +87,11 @@ bot.on('text', async (ctx) =>{
                 if(element.length === 49 && element.includes(word)){
                     //console.log(element)
                     newWinner._id = winners[i]._id
-                    newWinner.address = element
-                    await Winner.findOneAndUpdate(winners[i].idT, newWinner)
+
+                    await Winner.findOneAndUpdate(
+                        { idT: from.id }
+                        ,{ $set: { address: element } },
+                        { new: true })
                     
                 }
                 

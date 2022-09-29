@@ -140,6 +140,10 @@ bot.on('dice', async (ctx) => {
                 //setTimeout(() => ctx.reply("🎲 Congratulations, you have rolled a Six (6) on your first roll. \n \n You didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens. \n \n 👉 Reply to this message with your eToken:address and we will send you some Grumpy (GRP). \n \n ℹ️ If you don't have an eCash wallet that support eTokens, you can create one at https://cashtab.com web-wallet. \n \n ⚠️Note: After setting up your new wallet, please take the time to go to the ⚙️Settings menu to write down and store your 12 Word Seed Phrase. It acts as your Backup to your funds in case of loss of device. Keep this 12 Word Backup Phrase Safe and do not disclose it to anyone."), 3000)
                 //await newWinner.save()
             //}
+
+            if(dice.value === 1 && userReleasesInBd < 1){
+                setTimeout(() => ctx.reply("Multiply x3 rewards by paying grumpy $GRP to this address etoken:qrkj78yhtudcu9hndeg4vd7r4sfk7gu2puht4u5qmy"), 2500)
+            }
             
             if(sucessfulNumbersDice === 2){
                 if(dice.value === 1 ){

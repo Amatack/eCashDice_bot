@@ -142,7 +142,7 @@ bot.on('dice', async (ctx) => {
             //}
 
             if(dice.value === 1 && userReleasesInBd < 1){
-                setTimeout(() => ctx.reply("Multiply x3 rewards by paying grumpy $GRP to this address etoken:qrkj78yhtudcu9hndeg4vd7r4sfk7gu2puht4u5qmy"), 2500)
+                setTimeout(() => ctx.reply("Multiply x3 rewards by paying 1 million grumpys ($GRP) to this address: \n etoken:qrkj78yhtudcu9hndeg4vd7r4sfk7gu2puht4u5qmy"), 2500)
             }
             
             if(sucessfulNumbersDice === 2){

@@ -7,6 +7,7 @@ import { hoursLeft } from './hoursLeft.js'
 import {smtp} from './smtp.js'
 import Release from './models/Release.js'
 import Winner from './models/Winner.js'
+import TemporaryRaffles from './models/TemporaryRaffles.js'
 
 dotenv.config()
 
@@ -49,6 +50,7 @@ setInterval(() => {
             await smtp(smtpPassword, messageEmail, emailAddress)
             await Winner.deleteMany({})
             await Release.deleteMany({})
+            await TemporaryRaffles.deleteMany({})
             bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
         }
     })

@@ -73,7 +73,7 @@ bot.on('text', async (ctx) =>{
         if(winners[i].idT === from.id){
             let split = ctx.message.text.split(" ")
             split.forEach(async (element) => {
-                if(element.length === 49 && element.includes(word)){
+                if(element.length === 48 && element.includes(word)){
                     
                     await Winner.findOneAndUpdate(
                         { idT: from.id }

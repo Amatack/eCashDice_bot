@@ -1,8 +1,8 @@
 import {Schema, model} from "mongoose";
 
-const ReleaseScheme = new Schema(
+const DiceReleaseScheme = new Schema(
     {
-        idT:{
+        telegramId:{
             type: Number,
             required:  true,
             trim: true
@@ -14,10 +14,10 @@ const ReleaseScheme = new Schema(
         }
     },
     {
-        collection: "releases",
+        collection: "diceReleases",
         timestamps: false, //TODO createdAt, updatedAt
         versionKey: false
     }
 )
 
-export default model("Release", ReleaseScheme)
+export default model("DiceRelease", DiceReleaseScheme)

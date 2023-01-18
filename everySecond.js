@@ -1,6 +1,7 @@
 import moment from 'moment-timezone'
 
 export function everySecond(timeout,idChat, bot, callback){
+    
     let now = moment.tz("Europe/Istanbul").format('HH:mm')
     
     if(now === "02:00" && timeout.first === false) {

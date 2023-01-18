@@ -1,13 +1,19 @@
+import express from 'express'
 import dotenv from 'dotenv'
-import { Telegraf } from 'telegraf'
+import { Telegraf} from 'telegraf'
 
 import dbConnect from './database.js'
 import {everySecond} from './everySecond.js'
 import { hoursLeft } from './hoursLeft.js'
 import {smtp} from './smtp.js'
-import Release from './models/Release.js'
+import { diceGamePayment } from './controllers/diceGamePayment.js'
+import Addresses from "./models/PaymentAddresses.js";
+import Availability from "./models/Availability.js";
+import Release from './models/DiceRelease.js'
 import Winner from './models/Winner.js'
 import TemporaryRaffles from './models/TemporaryRaffles.js'
+import { timeoutId,paymentAddresses} from "./configs/constants.js";
+import { getName } from "./utils/name.js";
 
 dotenv.config()
 
@@ -15,6 +21,8 @@ const token = process.env.BOT_TOKEN
 if (token === undefined) {
     throw new Error('BOT_TOKEN must be provided!')
 }
+
+
 
 const idChat = process.env.ID_CHAT
 const idChannel = process.env.ID_CHANNEL
@@ -70,13 +78,13 @@ bot.on('text', async (ctx) =>{
     const word = "ecash:"
     const winners = await Winner.find()
     for(let i = 0; i < winners.length; i++){
-        if(winners[i].idT === from.id){
+        if(winners[i].telegramId === from.id){
             let split = ctx.message.text.split(" ")
             split.forEach(async (element) => {
                 if(element.length === 48 && element.includes(word)){
                     
                     await Winner.findOneAndUpdate(
-                        { idT: from.id }
+                        { telegramId: from.id }
                         ,{ $set: { address: element } },
                         { new: true })
                     
@@ -91,6 +99,9 @@ bot.on('text', async (ctx) =>{
 bot.on('dice', async (ctx) => {
     
     const {dice, forward_from, from } = ctx.message
+
+    if(dice.emoji !== "🎲") return
+    
     //Traducido como Lanzamientos de usuario en bd
     let userReleasesInBd = 0
     //Traducido sucessfulNumbersDice = Dados de numeros acertados
@@ -106,7 +117,7 @@ bot.on('dice', async (ctx) => {
         //you get objects
         user = releases[i]
         
-        if(user.idT === from.id){
+        if(user.telegramId === from.id){
             
             userReleasesInBd++
 
@@ -121,17 +132,17 @@ bot.on('dice', async (ctx) => {
         }
     }
     // without: && !forward_from. for tests 
-    if(dice.emoji === "🎲" && userReleasesInBd < 3 && !forward_from && from.is_bot === false){
+    if(dice.emoji === "🎲" && userReleasesInBd < 3 && from.is_bot === false){
 
         const newRelease = new Release(
             {
-                idT: from.id,
+                telegramId: from.id,
                 value: dice.value,
             })
         
         const newWinner = new Winner(
             {
-                idT: from.id
+                telegramId: from.id
             })
 
         bot.telegram.sendMessage(idChannel, `#id${from.id} \nname: ${from.first_name} \nusername: @${from.username} \nvalue: ${dice.value} `)
@@ -144,7 +155,58 @@ bot.on('dice', async (ctx) => {
             //}
 
             if(dice.value === 1 && userReleasesInBd < 1){
-                setTimeout(() => ctx.reply("Multiply x3 rewards by paying 1 million Grumpy ($GRP) to this address: \necash:qrkj78yhtudcu9hndeg4vd7r4sfk7gu2pue4u7z8ln"), 2500)
+                const name = getName(from)
+                const DirectionsUsing = await Availability.findOne({getValues: "easily"})
+
+                let addressValid = 0
+                for (const property in DirectionsUsing){
+                    if(property === "1" || property === "2" || property === "3" || property === "4")
+                        
+                        if(DirectionsUsing[property] === false){
+                            addressValid = Number(property)
+                            break
+                        }
+                }
+                if(addressValid === 0) {
+                    ctx.reply("Congestion de pagos pendientes, intenta jugar en otra ocación")
+                    return
+                }
+
+                //Por alguna extraña razón sin async y await no funciona
+                //Todo el objeto que devuelve el setTimeOut a la db
+                timeoutId[addressValid-1] = setTimeout(async () => {
+                    //Borrar address de pago, invalidar pago
+                    await ctx.reply("Borrar address de pago, invalidar pago")
+                    //Usar Express para cerrar este pago con un controller
+                    await Availability.findOneAndUpdate(
+                        {getValues: "easily"},
+                        { $set: { [addressValid]: false } },
+                        { new: false })
+                    await Addresses.deleteOne({telegramId: from.id, paymentReason: "Dice"})
+                    },
+                    
+                    //900000 son 15 minutos
+                    150000)
+                
+                setTimeout(async () => {
+                    await ctx.reply(name+" multiply x3 possible reward by paying 1 million Grumpy ($GRP) to this address:")
+                            const Address = new Addresses(
+                                {
+                                    telegramId: from.id,
+                                    address: paymentAddresses[addressValid-1],
+                                    paymentReason: "Dice"
+                                }
+                            )
+                            
+                            await Availability.findOneAndUpdate(
+                                {getValues: "easily"},
+                                { $set: { [addressValid]: true } },
+                                { new: true })
+                            await Address.save()
+                            await ctx.reply(paymentAddresses[addressValid-1])
+                            await ctx.reply("#Pending payment\nPay in under 15 minutes after your payment will not be valid")
+                }, 3750)
+                
             }
             
             if(sucessfulNumbersDice === 2){
@@ -163,6 +225,29 @@ bot.on('dice', async (ctx) => {
         }
     }
 })
+
+//-EXPRESS--------
+
+const app = express();
+
+app.set('port', process.env.PORT || 3005)
+
+
+//middlewares
+app.use(express.json())
+
+//app.use('/dice', Transacctions)
+
+app.post('/diceGamePayment', diceGamePayment)
+
+app.use((req, res) => {
+    return res.status(404).json({
+        error: "Not Found data",
+    })
+})
+
+app.listen(app.get('port'))
+console.log('Server on: http://localhost:'+app.get('port'))
 
 dbConnect()
 bot.launch()

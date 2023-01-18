@@ -1,6 +1,6 @@
 import {Schema, model} from "mongoose";
 
-const WinnersScheme = new Schema(
+const paymentAddressesScheme = new Schema(
     {
         telegramId:{
             type: Number,
@@ -9,15 +9,20 @@ const WinnersScheme = new Schema(
         },
         address:{
             type: String,
-            required:  false,
-            trim: true
+            required: true,
+            trim: true,
+        },
+        paymentReason:{
+            type: String,
+            required: true,
+            trim: true,
         }
     },
     {
-        collection: "winners",
+        collection: "paymentAddresses",
         timestamps: false, //TODO createdAt, updatedAt
         versionKey: false
     }
 )
 
-export default model("Winners", WinnersScheme)
+export default model("Addresses", paymentAddressesScheme)

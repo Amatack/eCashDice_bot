@@ -51,7 +51,7 @@ const emailAddress = process.env.EMAIL
 setInterval(() => {
     everySecond(timeout,idChat, bot, async (now, timeoutTwelfth)=>{
         timeLeft = now
-        if(now === "00:00" &&  timeoutTwelfth === false){
+        if(now === "00:00" && timeoutTwelfth === false){
             let messageEmail = new String
             const winners = await Winner.find()
             winners.forEach(element => {if(element.address) (messageEmail = messageEmail + " " + element.address)})
@@ -99,8 +99,8 @@ bot.on('text', async (ctx) =>{
 bot.on('dice', async (ctx) => {
     
     const {dice, forward_from, from } = ctx.message
-
-    if(dice.emoji !== "🎲") return
+    // without: || forward_from. for tests 
+    if(dice.emoji !== "🎲" || forward_from) return
     
     //Traducido como Lanzamientos de usuario en bd
     let userReleasesInBd = 0
@@ -131,8 +131,8 @@ bot.on('dice', async (ctx) => {
             }
         }
     }
-    // without: && !forward_from. for tests 
-    if(dice.emoji === "🎲" && userReleasesInBd < 3 && from.is_bot === false){
+    
+    if(userReleasesInBd < 3 && from.is_bot === false){
 
         const newRelease = new Release(
             {
@@ -168,16 +168,13 @@ bot.on('dice', async (ctx) => {
                         }
                 }
                 if(addressValid === 0) {
-                    ctx.reply("Congestion de pagos pendientes, intenta jugar en otra ocación")
+                    ctx.reply("Congestion of pending payments, try to play another time")
                     return
                 }
 
-                //Por alguna extraña razón sin async y await no funciona
-                //Todo el objeto que devuelve el setTimeOut a la db
+                
                 timeoutId[addressValid-1] = setTimeout(async () => {
-                    //Borrar address de pago, invalidar pago
-                    await ctx.reply("Borrar address de pago, invalidar pago")
-                    //Usar Express para cerrar este pago con un controller
+                    
                     await Availability.findOneAndUpdate(
                         {getValues: "easily"},
                         { $set: { [addressValid]: false } },
@@ -186,10 +183,14 @@ bot.on('dice', async (ctx) => {
                     },
                     
                     //900000 son 15 minutos
-                    150000)
+                    900000)
                 
                 setTimeout(async () => {
-                    await ctx.reply(name+" multiply x3 possible reward by paying 1 million Grumpy ($GRP) to this address:")
+                            await Availability.findOneAndUpdate(
+                                {getValues: "easily"},
+                                { $set: { [addressValid]: true } },
+                                { new: true })
+
                             const Address = new Addresses(
                                 {
                                     telegramId: from.id,
@@ -198,20 +199,16 @@ bot.on('dice', async (ctx) => {
                                 }
                             )
                             
-                            await Availability.findOneAndUpdate(
-                                {getValues: "easily"},
-                                { $set: { [addressValid]: true } },
-                                { new: true })
                             await Address.save()
-                            await ctx.reply(paymentAddresses[addressValid-1])
-                            await ctx.reply("#Pending payment\nPay in under 15 minutes after your payment will not be valid")
+                            await ctx.reply(name+" multiply x3 possible reward by paying 1 million Grumpy ($GRP) to this address:")
+                            await ctx.replyWithHTML(`<code>${paymentAddresses[addressValid-1]}</code>`)
+                            await ctx.reply("#Pending_payment\nPay in under 15 minutes after your payment will not be valid")
                 }, 3750)
-                
             }
             
             if(sucessfulNumbersDice === 2){
                 if(dice.value === 1 ){
-                setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's top prize of 250.000 XEC🏅 \n \nPlease reply to this message with your eCash (XEC) wallet address and admin @e_Koush will reward you as soon as possible!"), 3000)
+                setTimeout( () => {ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's top prize of 250.000 XEC🏅 \n \nPlease reply to this message with your eCash (XEC) wallet address and admin @e_Koush will reward you as soon as possible!")}, 3000)
                 }else{
                     setTimeout(() => ctx.reply("🎲 Aww, almost! \n \nYou didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens, instead! \n \n👉 Please share your eCash address. Note that your wallet needs to support eTokens. We recommend creating a wallet on Cashtab.com. If you are not sure if your wallet supports eTokens, feel free to ask! \n \n⚠️Note: After setting up your new wallet, please take the time to go to the ⚙️Settings menu to write down and store your 12 Word Seed Phrase. It acts as your Backup to your funds in case of loss of device. Keep this 12 Word Backup Phrase Safe and do not disclose it to anyone."), 3000)
                     await newWinner.save()
@@ -230,7 +227,7 @@ bot.on('dice', async (ctx) => {
 
 const app = express();
 
-app.set('port', process.env.PORT || 3005)
+app.set('port', process.env.PORT || 8080)
 
 
 //middlewares

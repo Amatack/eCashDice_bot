@@ -1,6 +1,10 @@
 import moment from 'moment-timezone'
 
-export function everySecond(timeout,idChat, bot, callback){
+import Availability from "./models/Availability.js";
+import Addresses from "./models/PaymentAddresses.js";
+import GamePhase from "./models/GamePhase.js";
+
+export async function everySecond(timeout,idChat, bot, callback){
     
     let now = moment.tz("Europe/Istanbul").format('HH:mm')
     
@@ -63,6 +67,25 @@ export function everySecond(timeout,idChat, bot, callback){
         bot.telegram.sendMessage(idChat, `In 4 hours attempts reset to win`)
         timeout.nineth = false
         timeout.tenth = true
+
+        const phase = await GamePhase.find()
+        if(phase[0].gamePhase !== "noTournament") return
+
+        const firstPayment = await Addresses.findOne({paymentReason: "Dice"})
+        if(firstPayment) return
+        
+        await Availability.findOneAndUpdate(
+            {getValues: "easily"},
+            { $set: 
+                { 
+                    1: false,
+                    2: false,
+                    3: false,
+                    4: false
+                } },
+            { new: false })
+        await Addresses.deleteMany({})
+        
     }
 
     if(now === "22:00" && timeout.eleventh === false) {

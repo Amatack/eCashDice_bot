@@ -9,8 +9,11 @@ export const diceGamePayment = async(req, res) => {
         clearTimeout(timeoutId[req.body.position-1])
         const sender = await bot.telegram.getChat(req.body.telegramid-Number(idModifier))
         const name = getName(sender)
-        await bot.telegram.sendMessage(idChat, name+req.body.mainResponse+"\n\n"+`<a href='https://explorer.e.cash/tx/${req.body.txid}' target='_blank' rel='noopener noreferrer'>Ver transacción en explorador</a>`,
-        {parse_mode:'HTML'}
+        await bot.telegram.sendMessage(idChat, name+req.body.mainResponse+"\n\n"+`<a href='https://explorer.e.cash/tx/${req.body.txid}' target='_blank' rel='noopener noreferrer'>View transaction in explorer</a>`,
+        {
+            parse_mode:'HTML',
+            disable_web_page_preview: true 
+        }
     )
     } catch (error) {
         console.log(error)

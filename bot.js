@@ -195,7 +195,8 @@ bot.on('dice', async (ctx) => {
                                 {
                                     telegramId: from.id,
                                     address: paymentAddresses[addressValid-1],
-                                    paymentReason: "Dice"
+                                    paymentReason: "Dice",
+                                    amount:1000000
                                 }
                             )
                             

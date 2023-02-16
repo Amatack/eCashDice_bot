@@ -16,6 +16,11 @@ const paymentAddressesScheme = new Schema(
             type: String,
             required: true,
             trim: true,
+        },
+        amount:{
+            type: Number,
+            required: false,
+            trim: true,
         }
     },
     {

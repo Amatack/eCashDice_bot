@@ -100,7 +100,7 @@ bot.on('dice', async (ctx) => {
     
     const {dice, forward_from, from } = ctx.message
     // without: || forward_from. for tests 
-    if(dice.emoji !== "🎲" || forward_from ) return
+    if(dice.emoji !== "🎲"  ) return
     console.log("dice")
     //Traducido como Lanzamientos de usuario en bd
     let userReleasesInBd = 0
@@ -201,9 +201,8 @@ bot.on('dice', async (ctx) => {
                             )
                             
                             await Address.save()
-                            await ctx.reply(name+" multiply x3 possible reward by paying 1 million Grumpy ($GRP) to this address:")
-                            await ctx.replyWithHTML(`<code>${paymentAddresses[addressValid-1]}</code>`)
-                            await ctx.reply("#Pending_payment\nPay in under 15 minutes after your payment will not be valid")
+                            
+                            await ctx.replyWithHTML(`${name} multiply x3 possible reward by paying 1 million Grumpy ($GRP) to this address:\n\n<code>${paymentAddresses[addressValid-1]}</code>\n\n#Pending_payment\nPay in under 15 minutes after your payment will not be valid`)
                 }, 3750)
             }
             

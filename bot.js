@@ -100,7 +100,7 @@ bot.on('dice', async (ctx) => {
     
     const {dice, forward_from, from } = ctx.message
     // without: || forward_from. for tests 
-    if(dice.emoji !== "🎲" || forward_from) return
+    if(dice.emoji !== "🎲" ) return
     
     //Traducido como Lanzamientos de usuario en bd
     let userReleasesInBd = 0

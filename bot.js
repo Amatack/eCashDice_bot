@@ -1,4 +1,3 @@
-import express from 'express'
 import dotenv from 'dotenv'
 import { Telegraf} from 'telegraf'
 
@@ -6,14 +5,9 @@ import dbConnect from './database.js'
 import {everySecond} from './everySecond.js'
 import { hoursLeft } from './hoursLeft.js'
 import {smtp} from './smtp.js'
-import { diceGamePayment } from './controllers/diceGamePayment.js'
-import Addresses from "./models/PaymentAddresses.js";
-import Availability from "./models/Availability.js";
 import Release from './models/DiceRelease.js'
 import Winner from './models/Winner.js'
-import TemporaryRaffles from './models/TemporaryRaffles.js'
-import { timeoutId,paymentAddresses} from "./configs/constants.js";
-import { getName } from "./utils/name.js";
+import { paymentAddresses} from "./configs/constants.js";
 
 dotenv.config()
 
@@ -58,7 +52,6 @@ setInterval(() => {
             await smtp(smtpPassword, messageEmail, emailAddress)
             await Winner.deleteMany({})
             await Release.deleteMany({})
-            await TemporaryRaffles.deleteMany({})
             bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
         }
     })
@@ -100,9 +93,8 @@ bot.on('dice', async (ctx) => {
     
     const {dice, forward_from, from } = ctx.message
     // without: || forward_from. for tests 
-    if(dice.emoji !== "🎲" || forward_from ) return
-    console.log("dice")
-    //Traducido como Lanzamientos de usuario en bd
+    if(dice.emoji !== "🎲" || forward_from) return
+
     let userReleasesInBd = 0
     //Traducido sucessfulNumbersDice = Dados de numeros acertados
     let sucessfulNumbersDice = 0
@@ -131,8 +123,7 @@ bot.on('dice', async (ctx) => {
             }
         }
     }
-    // without: && !forward_from. for tests 
-    if(dice.emoji === "🎲" && userReleasesInBd < 3 && from.is_bot === false){
+    if(userReleasesInBd < 3 && from.is_bot === false){
 
         const newRelease = new Release(
             {
@@ -155,55 +146,7 @@ bot.on('dice', async (ctx) => {
             //}
 
             if(dice.value === 1 && userReleasesInBd < 1){
-                const name = getName(from)
-                const DirectionsUsing = await Availability.findOne({getValues: "easily"})
-
-                let addressValid = 0
-                for (const property in DirectionsUsing){
-                    if(property === "1" || property === "2" || property === "3" || property === "4")
-                        
-                        if(DirectionsUsing[property] === false){
-                            addressValid = Number(property)
-                            break
-                        }
-                }
-                if(addressValid === 0) {
-                    ctx.reply("Congestion of pending payments, try to play another time")
-                    return
-                }
-
-                
-                timeoutId[addressValid-1] = setTimeout(async () => {
-                    
-                    await Availability.findOneAndUpdate(
-                        {getValues: "easily"},
-                        { $set: { [addressValid]: false } },
-                        { new: false })
-                    await Addresses.deleteOne({telegramId: from.id, paymentReason: "Dice"})
-                    },
-                    
-                    //900000 son 15 minutos
-                    900000)
-                
-                setTimeout(async () => {
-                            await Availability.findOneAndUpdate(
-                                {getValues: "easily"},
-                                { $set: { [addressValid]: true } },
-                                { new: true })
-
-                            const Address = new Addresses(
-                                {
-                                    telegramId: from.id,
-                                    address: paymentAddresses[addressValid-1],
-                                    paymentReason: "Dice",
-                                    amount:1000000
-                                }
-                            )
-                            
-                            await Address.save()
-                            
-                            await ctx.replyWithHTML(`${name} multiply x3 possible reward by paying 1 million Grumpy ($GRP) to this address:\n\n<code>${paymentAddresses[addressValid-1]}</code>\n\n#Pending_payment\nPay in under 15 minutes after your payment will not be valid`)
-                }, 3750)
+                await ctx.replyWithHTML(`${from.first_name} multiply x3 possible reward by paying 1 million Grumpy ($GRP) to this address:\n\n<code>ecash:qq5v4wmfhclzqur4wnt6phwxt2qpk6h9nyesy04fn0</code>`)
             }
             
             if(sucessfulNumbersDice === 2){
@@ -222,29 +165,6 @@ bot.on('dice', async (ctx) => {
         }
     }
 })
-
-//-EXPRESS--------
-
-const app = express();
-
-app.set('port', process.env.PORT || 8080)
-
-
-//middlewares
-app.use(express.json())
-
-//app.use('/dice', Transacctions)
-
-app.post('/diceGamePayment', diceGamePayment)
-
-app.use((req, res) => {
-    return res.status(404).json({
-        error: "Not Found data",
-    })
-})
-
-app.listen(app.get('port'))
-console.log('Server on: http://localhost:'+app.get('port'))
 
 dbConnect()
 bot.launch()

@@ -121,7 +121,7 @@ bot.on('dice', async (ctx) => {
         }
     }
     // without: && !forward_from. for tests 
-    if(dice.emoji === "🎲" && userReleasesInBd < 3 && !forward_from && from.is_bot === false){
+    if(dice.emoji === "🎲" && userReleasesInBd < 3 && from.is_bot === false){
 
         const newRelease = new Release(
             {

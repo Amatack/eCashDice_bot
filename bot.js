@@ -7,7 +7,6 @@ import { hoursLeft } from './hoursLeft.js'
 import {smtp} from './smtp.js'
 import Release from './models/DiceRelease.js'
 import Winner from './models/Winner.js'
-import { paymentAddresses} from "./configs/constants.js";
 
 dotenv.config()
 

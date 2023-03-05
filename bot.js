@@ -1,5 +1,6 @@
 import dotenv from 'dotenv'
 import { Telegraf} from 'telegraf'
+import {message} from 'telegraf/filters'
 
 import dbConnect from './database.js'
 import {everySecond} from './everySecond.js'
@@ -63,7 +64,7 @@ bot.command('time', (ctx) => {
 })
 
 
-bot.on('text', async (ctx) =>{
+bot.on(message("text"), async (ctx) =>{
 
     const { from } = ctx.message
     
@@ -88,7 +89,7 @@ bot.on('text', async (ctx) =>{
     }
 })
 
-bot.on('dice', async (ctx) => {
+bot.on(message("dice"), async (ctx) => {
     
     const {dice, forward_from, from } = ctx.message
     // without: || forward_from. for tests 

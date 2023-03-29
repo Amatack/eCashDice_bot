@@ -1,3 +1,4 @@
+import dotenv from "dotenv"
 import { Telegraf} from 'telegraf'
 import {message} from 'telegraf/filters'
 
@@ -9,7 +10,7 @@ import Release from './models/DiceRelease.js'
 import Winner from './models/Winner.js'
 
 import {token, idChat, smtpPassword, emailAddress, idChannel} from "./configs/constants.js"
-
+dotenv.config()
 if (token === undefined) {
     throw new Error('BOT_TOKEN must be provided!')
 }

@@ -4,7 +4,8 @@ const dbConnect = () => {
     const DB_URI = process.env.DB_URI || "mongodb://localhost:27017/eCashPlay"
     mongoose.connect(DB_URI, {
         dbName: "eCashPlay",
-        
+        useNewUrlParser: true,
+        useUnifiedTopology: true
     },(err, res)=>{
         if(!err){
             console.log("Successful connection to database")

@@ -158,6 +158,7 @@ bot.on(message("dice"), async (ctx) => {
     }
 })
 
-bot.launch()
 dbConnect()
+bot.launch()
+
 

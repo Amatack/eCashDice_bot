@@ -1,3 +1,4 @@
+import dotenv from 'dotenv'
 import { Telegraf} from 'telegraf'
 import {message} from 'telegraf/filters'
 
@@ -8,12 +9,17 @@ import {smtp} from './smtp.js'
 import Release from './models/DiceRelease.js'
 import Winner from './models/Winner.js'
 
-import {token, idChat, smtpPassword, emailAddress, idChannel} from "./configs/constants.js"
+dotenv.config()
 
+const token = process.env.BOT_TOKEN
 if (token === undefined) {
     throw new Error('BOT_TOKEN must be provided!')
 }
 
+
+
+const idChat = process.env.ID_CHAT
+const idChannel = process.env.ID_CHANNEL
 const bot = new Telegraf(token)
 
 // Represents 24 hours
@@ -34,6 +40,8 @@ let timeout = {
 
 let timeLeft = new String
 
+const smtpPassword = process.env.SMTP
+const emailAddress = process.env.EMAIL
 setInterval(() => {
     everySecond(timeout,idChat, bot, async (now, timeoutTwelfth)=>{
         timeLeft = now
@@ -85,7 +93,7 @@ bot.on(message("dice"), async (ctx) => {
     
     const {dice, forward_from, from } = ctx.message
     // without: || forward_from. for tests 
-    if(dice.emoji !== "🎲" || forward_from) return
+    if(dice.emoji !== "🎲" ) return
 
     let userReleasesInBd = 0
     //Traducido sucessfulNumbersDice = Dados de numeros acertados
@@ -160,5 +168,4 @@ bot.on(message("dice"), async (ctx) => {
 
 dbConnect()
 bot.launch()
-
 

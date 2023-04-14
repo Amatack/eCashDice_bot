@@ -7,7 +7,7 @@ import { hoursLeft } from './hoursLeft.js'
 import {smtp} from './smtp.js'
 import Release from './models/DiceRelease.js'
 import Winner from './models/Winner.js'
-import {token, idChat, idChannel, smtpPassword, emailAddress } from './configs/constants.js'
+import {token, idChat, idChannel, smtpPassword, emailAddress, threadId } from './configs/constants.js'
 
 if (token === undefined) {
     throw new Error('BOT_TOKEN must be provided!')
@@ -83,9 +83,13 @@ bot.on(message("text"), async (ctx) =>{
 
 bot.on(message("dice"), async (ctx) => {
     
-    const {dice, forward_from, from } = ctx.message
+    const {dice, forward_from, from, message_thread_id, message_id } = ctx.message
     // without: || forward_from. for tests 
-    if(dice.emoji !== "🎲" ) return
+    if(dice.emoji !== "🎲" || forward_from) return
+    if(Number(threadId) !== message_thread_id){
+        await ctx.deleteMessage(message_id)
+        return
+    }
 
     let userReleasesInBd = 0
     //Traducido sucessfulNumbersDice = Dados de numeros acertados

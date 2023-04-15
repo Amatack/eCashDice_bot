@@ -1,10 +1,13 @@
+import axios from 'axios'
 import moment from 'moment-timezone'
-import { threadId } from './configs/constants.js'
+import { authHash,threadId, eCashFootballHost } from './configs/constants.js'
 
 export async function everySecond(timeout,idChat, bot, callback){
     
-    let now = moment.tz("Europe/Istanbul").format('HH:mm')
-    
+    let time = moment.tz("Europe/Istanbul")
+    let now = time.format('HH:mm')
+    let day = time.format('dddd')
+
     if(now === "02:00" && timeout.first === false) {
         bot.telegram.sendMessage(idChat, `In 22 hours attempts reset to win`,
             {
@@ -97,10 +100,22 @@ export async function everySecond(timeout,idChat, bot, callback){
     }
     callback(now, timeout.twelfth)
     if(now === "00:00" && timeout.twelfth === false) {
-        bot.telegram.sendMessage(idChat, "⏳ Dice Timer has been reset! \n \n Everyone has a new try to get 3x1 (🎲 🎲🎲) for today. \n \n Good Luck🤞",{
-            message_thread_id: threadId,
-        })
         timeout.eleventh = false
         timeout.twelfth = true
+        if(day === "Sunday"){
+            
+            await axios.get(`${eCashFootballHost}/v1/showLeaderboard`,
+            {
+                headers:{
+                    authHash
+                },
+            })
+        }
+
+        bot.telegram.sendMessage(idChat, "⏳ Dice Timer has been reset! \n \n Everyone has a new try to get 3x1 (🎲🎲🎲) for today. \n \n Good Luck🤞",{
+            message_thread_id: threadId,
+        })
+        
+        
     }
 }

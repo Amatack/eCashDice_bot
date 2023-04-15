@@ -102,7 +102,7 @@ export async function everySecond(timeout,idChat, bot, callback){
     if(now === "00:00" && timeout.twelfth === false) {
         timeout.eleventh = false
         timeout.twelfth = true
-        if(day === "Sunday"){
+        if(day === "Monday"){
             
             await axios.get(`${eCashFootballHost}/v1/showLeaderboard`,
             {

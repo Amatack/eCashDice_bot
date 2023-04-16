@@ -86,10 +86,10 @@ bot.on(message("dice"), async (ctx) => {
     const {dice, forward_from, from, message_thread_id, message_id } = ctx.message
     // without: || forward_from. for tests 
     if(dice.emoji !== "🎲" || forward_from) return
-    /* if(Number(threadId) !== message_thread_id){
+    if(Number(threadId) !== message_thread_id){
         await ctx.deleteMessage(message_id)
         return
-    } */
+    }
 
     let userReleasesInBd = 0
     //Traducido sucessfulNumbersDice = Dados de numeros acertados

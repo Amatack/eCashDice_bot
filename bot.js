@@ -87,7 +87,7 @@ bot.on(message("dice"), async (ctx) => {
     // without: || forward_from. for tests 
     if(dice.emoji !== "🎲" || forward_from) return
     if(Number(threadId) !== message_thread_id){
-        //await ctx.deleteMessage(message_id)
+        await ctx.deleteMessage(message_id)
         return
     }
 

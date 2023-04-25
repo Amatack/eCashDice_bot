@@ -83,9 +83,13 @@ bot.on(message("text"), async (ctx) =>{
 
 bot.on(message("dice"), async (ctx) => {
     
-    const {dice, forward_from, from, message_thread_id, message_id } = ctx.message
+    const {dice, forward_from, from, message_thread_id, message_id, is_topic_message } = ctx.message
+
+    if(!is_topic_message) return
+
     // without: || forward_from. for tests 
     if(dice.emoji !== "🎲" || forward_from) return
+
     if(Number(threadId) !== message_thread_id){
         await ctx.deleteMessage(message_id)
         return

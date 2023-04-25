@@ -83,9 +83,9 @@ bot.on(message("text"), async (ctx) =>{
 
 bot.on(message("dice"), async (ctx) => {
     
-    const {dice, forward_from, from, message_thread_id, message_id, is_topic_message } = ctx.message
+    const {dice, forward_from, from, message_thread_id, message_id, chat } = ctx.message
 
-    if(!is_topic_message) return
+    if(chat.id !== Number(idChat))return
 
     // without: || forward_from. for tests 
     if(dice.emoji !== "🎲" || forward_from) return

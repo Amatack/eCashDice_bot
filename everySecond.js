@@ -86,14 +86,15 @@ export async function everySecond(timeout,idChat, bot, callback){
     if(now === "20:00" && timeout.tenth === false) {
         timeout.nineth = false
         timeout.tenth = true
-        if(day === "Wednesday"){
+        //Example
+        /* if(day === "Wednesday"){
             await axios.get(`${eCashFootballHost}/v1/showLeaderboard`,
             {
                 headers:{
                     authHash
                 },
             })
-        }
+        } */
         bot.telegram.sendMessage(idChat, `In 4 hours attempts reset to win`,{
             message_thread_id: threadId,
         })
@@ -114,6 +115,13 @@ export async function everySecond(timeout,idChat, bot, callback){
         if(day === "Monday"){
 
             await axios.get(`${eCashFootballHost}/v1/saveLeaderboard`,
+            {
+                headers:{
+                    authHash
+                },
+            })
+
+            await axios.get(`${eCashFootballHost}/v1/showLeaderboard`,
             {
                 headers:{
                     authHash

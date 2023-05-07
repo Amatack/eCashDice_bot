@@ -13,7 +13,6 @@ if (token === undefined) {
     throw new Error('BOT_TOKEN must be provided!')
 }
 
-
 const bot = new Telegraf(token)
 
 // Represents 24 hours

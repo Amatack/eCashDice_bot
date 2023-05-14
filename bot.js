@@ -8,6 +8,7 @@ import {smtp} from './smtp.js'
 import Release from './models/DiceRelease.js'
 import Winner from './models/Winner.js'
 import {token, idChat, idChannel, smtpPassword, emailAddress, threadId } from './configs/constants.js'
+import UserAddress from './models/UserAddress.js'
 
 if (token === undefined) {
     throw new Error('BOT_TOKEN must be provided!')
@@ -87,7 +88,7 @@ bot.on(message("dice"), async (ctx) => {
     if(chat.id !== Number(idChat))return
 
     // without: || forward_from. for tests 
-    if(dice.emoji !== "🎲" || forward_from) return
+    if(dice.emoji !== "🎲") return
 
     if(Number(threadId) !== message_thread_id){
         await ctx.deleteMessage(message_id)
@@ -95,8 +96,8 @@ bot.on(message("dice"), async (ctx) => {
     }
 
     let userReleasesInBd = 0
-    //Traducido sucessfulNumbersDice = Dados de numeros acertados
-    let sucessfulNumbersDice = 0
+    
+    let sucessfulDiceNumbers = 0
     
     let user;
     //GET
@@ -114,7 +115,7 @@ bot.on(message("dice"), async (ctx) => {
 
             //For each die in 1
             if(user.value === 1){
-                sucessfulNumbersDice++
+                sucessfulDiceNumbers++
             }
 
             if(userReleasesInBd === 3){
@@ -148,15 +149,25 @@ bot.on(message("dice"), async (ctx) => {
                 await ctx.replyWithHTML(`${from.first_name} multiply x3 possible reward by paying 1 million Grumpy ($GRP) to this address:\n\n<code>ecash:qq5v4wmfhclzqur4wnt6phwxt2qpk6h9nyesy04fn0</code>`)
             }
             
-            if(sucessfulNumbersDice === 2){
-                if(dice.value === 1 ){
-                setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's reward!🏅 \n \nPlease reply to this message with your eCash (XEC) wallet address and admin @e_Koush will reward you as soon as possible!"), 3000)
+            if(sucessfulDiceNumbers === 2){
+
+                const userAddress = await UserAddress.findOne({ tgId: from.id });
+
+                if(userAddress === null && dice.value === 1){
+                    setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's reward!🏅 \n \nPlease reply to this message with your eCash (XEC) wallet address and admin @e_Koush will reward you as soon as possible!"), 3000)
+                }else if(userAddress !== null && dice.value === 1){
+                    setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's reward!🏅 \n \nYour address registered is\n"+userAddress.address+"\n\nAdmin @e_Koush will reward you as soon as possible!"), 3000)
                 }else{
-                    setTimeout(() => ctx.reply("🎲 Aww, almost! \n \nYou didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens, instead! \n \n👉 Please share your eCash address. Note that your wallet needs to support eTokens. We recommend creating a wallet on Cashtab.com. If you are not sure if your wallet supports eTokens, feel free to ask! \n \n⚠️Note: After setting up your new wallet, please take the time to go to the ⚙️Settings menu to write down and store your 12 Word Seed Phrase. It acts as your Backup to your funds in case of loss of device. Keep this 12 Word Backup Phrase Safe and do not disclose it to anyone."), 3000)
+                    if(userAddress === null){
+                        setTimeout(() => ctx.reply("🎲 Aww, almost! \n \nYou didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens, instead! \n \n👉 Please share your eCash address. Note that your wallet needs to support eTokens. We recommend creating a wallet on Cashtab.com. If you are not sure if your wallet supports eTokens, feel free to ask! \n \n⚠️Note: After setting up your new wallet, please take the time to go to the ⚙️Settings menu to write down and store your 12 Word Seed Phrase. It acts as your Backup to your funds in case of loss of device. Keep this 12 Word Backup Phrase Safe and do not disclose it to anyone."), 3000)
+                    }else{
+                        setTimeout(() => ctx.reply("🎲 Aww, almost! \n \nYou didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens, instead! \n \n👉 Your address registered is\n"+userAddress.address+"\n\nAdmin @e_Koush will reward you as soon as possible!"), 3000)
+                    }
+                    
                     await newWinner.save()
                 }
             }
-            
+
             await newRelease.save()
             
         } catch (error) {

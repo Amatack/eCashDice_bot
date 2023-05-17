@@ -131,10 +131,11 @@ bot.on(message("dice"), async (ctx) => {
                 value: dice.value,
             })
         
-        const newWinner = new Winner(
-            {
-                telegramId: from.id
-            })
+        const userWinner = {
+            telegramId: from.id
+        }
+        
+        const newWinner = new Winner(userWinner)
 
         bot.telegram.sendMessage(idChannel, `#id${from.id} \nname: ${from.first_name} \nusername: @${from.username} \nvalue: ${dice.value} `)
         try {
@@ -152,7 +153,7 @@ bot.on(message("dice"), async (ctx) => {
             if(sucessfulDiceNumbers === 2){
 
                 const userAddress = await UserAddress.findOne({ tgId: from.id });
-
+                
                 if(userAddress === null && dice.value === 1){
                     setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's reward!🏅 \n \nPlease reply to this message with your eCash (XEC) wallet address and admin @e_Koush will reward you as soon as possible!"), 3000)
                 }else if(userAddress !== null && dice.value === 1){
@@ -161,6 +162,7 @@ bot.on(message("dice"), async (ctx) => {
                     if(userAddress === null){
                         setTimeout(() => ctx.reply("🎲 Aww, almost! \n \nYou didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens, instead! \n \n👉 Please share your eCash address. Note that your wallet needs to support eTokens. We recommend creating a wallet on Cashtab.com. If you are not sure if your wallet supports eTokens, feel free to ask! \n \n⚠️Note: After setting up your new wallet, please take the time to go to the ⚙️Settings menu to write down and store your 12 Word Seed Phrase. It acts as your Backup to your funds in case of loss of device. Keep this 12 Word Backup Phrase Safe and do not disclose it to anyone."), 3000)
                     }else{
+                        newWinner.address = userAddress.address
                         setTimeout(() => ctx.reply("🎲 Aww, almost! \n \nYou didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens, instead! \n \n👉 Your address registered is\n"+userAddress.address+"\n\nAdmin @e_Koush will reward you as soon as possible!"), 3000)
                     }
                     

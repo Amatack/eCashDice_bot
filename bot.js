@@ -44,6 +44,7 @@ setInterval(() => {
             await smtp(smtpPassword, messageEmail, emailAddress)
             await Winner.deleteMany({})
             await Release.deleteMany({})
+            await UserAddress.deleteMany({ address: { $exists: false } })
             bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
         }
     })
@@ -58,21 +59,34 @@ bot.command('time', (ctx) => {
 
 bot.on(message("text"), async (ctx) =>{
 
-    const { from } = ctx.message
+    const { from, chat } = ctx.message
     
+    if(chat.id !== Number(idChat))return
+
     const word = "ecash:"
+
+    const withAddress = await UserAddress.find({ tgId: from.id })
+
+    //Suggestion to enter address
+    if(withAddress.length === 0 ){
+        ctx.reply(from.first_name+" please register your address writing with the next format: /register + (Your ecash Address) Example: \n"+"/register ecash:qq5v4wmfhclzqur4wnt6phwxt2qpk6h9nyesy04fn0")
+        const userAddress = {
+            tgId: from.id
+        }
+
+        const newUserAddress = new UserAddress(userAddress)
+        await newUserAddress.save()
+    }
     const winners = await Winner.find()
     for(let i = 0; i < winners.length; i++){
         if(winners[i].telegramId === from.id){
             let split = ctx.message.text.split(" ")
             split.forEach(async (element) => {
                 if(element.length === 48 && element.includes(word)){
-                    
                     await Winner.findOneAndUpdate(
                         { telegramId: from.id }
                         ,{ $set: { address: element } },
                         { new: true })
-                    
                 }
                 
             });
@@ -145,9 +159,23 @@ bot.on(message("dice"), async (ctx) => {
                 //setTimeout(() => ctx.reply("🎲 Congratulations, you have rolled a Six (6) on your first roll. \n \n You didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens. \n \n 👉 Reply to this message with your eToken:address and we will send you some Grumpy (GRP). \n \n ℹ️ If you don't have an eCash wallet that support eTokens, you can create one at https://cashtab.com web-wallet. \n \n ⚠️Note: After setting up your new wallet, please take the time to go to the ⚙️Settings menu to write down and store your 12 Word Seed Phrase. It acts as your Backup to your funds in case of loss of device. Keep this 12 Word Backup Phrase Safe and do not disclose it to anyone."), 3000)
                 //await newWinner.save()
             //}
+            if(userReleasesInBd < 1){
+                if(dice.value === 1 ){
+                    await ctx.replyWithHTML(`${from.first_name} multiply x3 possible reward by paying 1 million Grumpy ($GRP) to this address:\n\n<code>ecash:qq5v4wmfhclzqur4wnt6phwxt2qpk6h9nyesy04fn0</code>`)
+                }else{
+                    const withAddress = await UserAddress.find({ tgId: from.id })
 
-            if(dice.value === 1 && userReleasesInBd < 1){
-                await ctx.replyWithHTML(`${from.first_name} multiply x3 possible reward by paying 1 million Grumpy ($GRP) to this address:\n\n<code>ecash:qq5v4wmfhclzqur4wnt6phwxt2qpk6h9nyesy04fn0</code>`)
+                    //Suggestion to enter address
+                    if(withAddress.length === 0 ){
+                        ctx.reply(from.first_name+" please register your address writing with the next format: /register + (Your ecash Address) Example: \n"+"/register ecash:qq5v4wmfhclzqur4wnt6phwxt2qpk6h9nyesy04fn0")
+                        const userAddress = {
+                            tgId: from.id
+                        }
+
+                        const newUserAddress = new UserAddress(userAddress)
+                        await newUserAddress.save()
+                    }
+                }
             }
             
             if(sucessfulDiceNumbers === 2){

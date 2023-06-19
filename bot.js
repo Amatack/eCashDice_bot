@@ -69,7 +69,7 @@ bot.on(message("text"), async (ctx) =>{
 
     //Suggestion to enter address
     if(withAddress.length === 0 ){
-        ctx.reply(from.first_name+" please register your address writing with the next format: /register + (Your ecash Address) Example: \n"+"/register ecash:qq5v4wmfhclzqur4wnt6phwxt2qpk6h9nyesy04fn0")
+        ctx.replyWithHTML(`Welcome ${from.first_name}\n\nTo be able to receive rewards, please register your eCash address by using the /register command, followed by your address.\n\nExample:\n\n<code>/register eCash:address</code>`)
         const userAddress = {
             tgId: from.id
         }

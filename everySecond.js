@@ -133,6 +133,5 @@ export async function everySecond(timeout,idChat, bot, callback){
             message_thread_id: threadId,
         })
         
-        
     }
 }

@@ -167,7 +167,7 @@ bot.on(message("dice"), async (ctx) => {
 
                     //Suggestion to enter address
                     if(withAddress.length === 0 ){
-                        ctx.replyWithHTML(`Welcome ${from.first_name}\n\nTo be able to receive rewards, please register your eCash address by using the /register command, followed by your address.\n\nExample:\n\n<code>/register eCash:address</code>`)
+                        ctx.replyWithHTML(`Welcome ${from.first_name}\n\nTo be able to receive rewards, please register your eCash address by using the /register command, followed by your address.\n\nExample:\n\n<code>/register ecash:address</code>`)
                         const userAddress = {
                             tgId: from.id
                         }

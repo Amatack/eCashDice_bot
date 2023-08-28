@@ -110,7 +110,7 @@ export async function everySecond(timeout,idChat, bot, callback){
         timeout.eleventh = true
     }
     callback(now, timeout.twelfth)
-    if(now === "07:41" && timeout.twelfth === false) {
+    if(now === "07:47" && timeout.twelfth === false) {
         timeout.eleventh = false
         timeout.twelfth = true
         if(day === "Monday"){

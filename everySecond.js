@@ -7,7 +7,8 @@ export async function everySecond(timeout,idChat, bot, callback){
     let time = moment.tz("Europe/Istanbul")
     let now = time.format('HH:mm')
     let day = time.format('dddd')
-
+    try {
+    
     if(now === "02:00" && timeout.first === false) {
         bot.telegram.sendMessage(idChat, `In 22 hours attempts reset to win`,
             {
@@ -109,7 +110,7 @@ export async function everySecond(timeout,idChat, bot, callback){
         timeout.eleventh = true
     }
     callback(now, timeout.twelfth)
-    if(now === "00:00" && timeout.twelfth === false) {
+    if(now === "07:41" && timeout.twelfth === false) {
         timeout.eleventh = false
         timeout.twelfth = true
         if(day === "Monday"){
@@ -133,5 +134,8 @@ export async function everySecond(timeout,idChat, bot, callback){
             message_thread_id: threadId,
         })
         
+    }
+    } catch (error) {
+        console.log('Error displayed from catch: '+error)
     }
 }

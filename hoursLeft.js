@@ -1,4 +1,3 @@
-
 export function hoursLeft(timeLeft){
     let split = timeLeft.split(":")
     split[0] = 23 - split[0]

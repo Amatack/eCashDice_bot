@@ -8,7 +8,7 @@ import {smtp} from './smtp.js'
 import Release from './models/DiceRelease.js'
 import Winner from './models/Winner.js'
 import {token, idChat, idChannel, smtpPassword, emailAddress, threadId } from './configs/constants.js'
-import UserAddress from './models/UserAddress.js'
+import userAddresses from './models/userAddresses.js'
 
 if (token === undefined) {
     throw new Error('BOT_TOKEN must be provided!')
@@ -44,7 +44,7 @@ setInterval(() => {
             await smtp(smtpPassword, messageEmail, emailAddress)
             await Winner.deleteMany({})
             await Release.deleteMany({})
-            await UserAddress.deleteMany({ address: { $exists: false } })
+            await userAddresses.deleteMany({ address: { $exists: false } })
             bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
         }
     })
@@ -65,7 +65,7 @@ bot.on(message("text"), async (ctx) =>{
 
     const word = "ecash:"
 
-    const withAddress = await UserAddress.find({ tgId: from.id })
+    const withAddress = await userAddresses.find({ tgId: from.id })
 
     //Suggestion to enter address
     if(withAddress.length === 0 ){
@@ -74,7 +74,7 @@ bot.on(message("text"), async (ctx) =>{
             tgId: from.id
         }
 
-        const newUserAddress = new UserAddress(userAddress)
+        const newUserAddress = new userAddresses(userAddress)
         await newUserAddress.save()
     }
     const winners = await Winner.find()
@@ -163,7 +163,7 @@ bot.on(message("dice"), async (ctx) => {
                 if(dice.value === 1 ){
                     await ctx.replyWithHTML(`${from.first_name} multiply x3 possible reward by paying 1 million Grumpy ($GRP) to this address:\n\n<code>ecash:qq5v4wmfhclzqur4wnt6phwxt2qpk6h9nyesy04fn0</code>`)
                 }else{
-                    const withAddress = await UserAddress.find({ tgId: from.id })
+                    const withAddress = await userAddresses.find({ tgId: from.id })
 
                     //Suggestion to enter address
                     if(withAddress.length === 0 ){
@@ -172,7 +172,7 @@ bot.on(message("dice"), async (ctx) => {
                             tgId: from.id
                         }
 
-                        const newUserAddress = new UserAddress(userAddress)
+                        const newUserAddress = new userAddresses(userAddress)
                         await newUserAddress.save()
                     }
                 }
@@ -180,7 +180,7 @@ bot.on(message("dice"), async (ctx) => {
             
             if(sucessfulDiceNumbers === 2){
 
-                const userAddress = await UserAddress.findOne({ tgId: from.id });
+                const userAddress = await userAddresses.findOne({ tgId: from.id });
                 
                 if(userAddress === null && dice.value === 1){
                     setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's reward!🏅 \n \nPlease reply to this message with your eCash (XEC) wallet address and admin @eKoush will reward you as soon as possible!"), 3000)

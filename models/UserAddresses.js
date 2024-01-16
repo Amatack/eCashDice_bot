@@ -1,6 +1,6 @@
 import {Schema, model} from "mongoose";
 
-const userAddressScheme = new Schema(
+const userAddressesScheme = new Schema(
     {
         tgId:{
             type: Number,
@@ -11,13 +11,18 @@ const userAddressScheme = new Schema(
             type: String,
             required:  false,
             trim: true
+        },
+        slotGameAddress: {
+            type: String,
+            required:  false,
+            trim: true
         }
     },
     {
-        collection: "userAddress",
+        collection: "userAddresses",
         timestamps: false, //TODO createdAt, updatedAt
         versionKey: false
     }
 )
 
-export default model("UserAddress", userAddressScheme)
+export default model("userAddresses", userAddressesScheme)

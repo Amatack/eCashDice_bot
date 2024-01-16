@@ -8,7 +8,7 @@ import {smtp} from './smtp.js'
 import Release from './models/DiceRelease.js'
 import Winner from './models/Winner.js'
 import {token, idChat, idChannel, smtpPassword, emailAddress, threadId } from './configs/constants.js'
-import userAddresses from './models/userAddresses.js'
+import userAddresses from './models/UserAddresses.js'
 
 if (token === undefined) {
     throw new Error('BOT_TOKEN must be provided!')

@@ -41,7 +41,7 @@ setInterval(() => {
             let messageEmail = new String
             const winners = await Winner.find()
             winners.forEach(element => {if(element.address) (messageEmail = messageEmail + " " + element.address)})
-            await smtp(smtpPassword, messageEmail, emailAddress)
+            //await smtp(smtpPassword, messageEmail, emailAddress)
             await Winner.deleteMany({})
             await Release.deleteMany({})
             await userAddresses.deleteMany({ address: { $exists: false } })

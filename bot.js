@@ -9,6 +9,7 @@ import Release from './models/DiceRelease.js'
 import Winner from './models/Winner.js'
 import {token, idChat, idChannel, smtpPassword, emailAddress, threadId } from './configs/constants.js'
 import userAddresses from './models/UserAddresses.js'
+import DiceGameMessages from './models/DiceGameMessages.js'
 
 if (token === undefined) {
     throw new Error('BOT_TOKEN must be provided!')
@@ -133,6 +134,39 @@ bot.on(message("dice"), async (ctx) => {
             }
 
             if(userReleasesInBd === 3){
+                try {
+                    const allDiceGameMessages = await DiceGameMessages.find()
+                    
+                    const {message_id: message_id2} = await ctx.reply("Oh-Oh, you already rolled for today. You can try again tomorrow. Use the /time command to check how many hours are left for your next chance to win!",{
+                        reply_to_message_id: message_id,
+                    })
+                    if(allDiceGameMessages.length === 0){
+
+                        const diceGameMessages = DiceGameMessages({
+                            tgId: from.id,
+                            overGameMessageId: message_id2,
+                        })
+        
+                        await diceGameMessages.save()
+                        return
+                    }else{
+                        
+                        await ctx.deleteMessage(allDiceGameMessages[0].overGameMessageId)
+                        //empty object to modify the first document found 
+                        await DiceGameMessages.findOneAndUpdate({},
+                            {   
+                                $set: {
+                                    tgId: from.id,
+                                    overGameMessageId: message_id2,
+                                }
+                            },{ new: false }
+                        )
+                    }
+
+                    setTimeout(() => ctx.deleteMessage(message_id), 3000)
+                } catch (error) {
+                    console.error("Error from condition userReleasesInBd === 3: ", error)
+                }
                 return
             }
         }

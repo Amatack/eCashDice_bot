@@ -148,7 +148,7 @@ bot.on(message("dice"), async (ctx) => {
                         })
         
                         await diceGameMessages.save()
-                        return
+                        
                     }else{
                         
                         await ctx.deleteMessage(allDiceGameMessages[0].overGameMessageId)

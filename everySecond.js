@@ -4,7 +4,7 @@ import { authHash,threadId, eCashFootballHost } from './configs/constants.js'
 
 export async function everySecond(timeout,idChat, bot, callback){
     
-    let time = moment.tz("Europe/Istanbul")
+    let time = moment.tz("UTC")
     let now = time.format('HH:mm')
     let day = time.format('dddd')
     try {

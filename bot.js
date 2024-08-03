@@ -10,6 +10,7 @@ import Winner from './models/Winner.js'
 import {token, idChat, idChannel, smtpPassword, emailAddress, threadId } from './configs/constants.js'
 import userAddresses from './models/UserAddresses.js'
 import DiceGameMessages from './models/DiceGameMessages.js'
+import DartsScore from './models/DartsScore.js'
 
 if (token === undefined) {
     throw new Error('BOT_TOKEN must be provided!')
@@ -45,7 +46,9 @@ setInterval(() => {
             //await smtp(smtpPassword, messageEmail, emailAddress)
             await Winner.deleteMany({})
             await Release.deleteMany({})
+            await DartsScore.deleteMany({})
             await userAddresses.deleteMany({ address: { $exists: false } })
+
             bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
         }
     })

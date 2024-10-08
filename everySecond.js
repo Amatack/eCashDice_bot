@@ -20,6 +20,7 @@ export async function everySecond(timeout,idChat, bot, callback){
         timeout.first = true
     }
 
+    
     if(now === "04:00" && timeout.second === false) {
         bot.telegram.sendMessage(idChat, `In 20 hours attempts reset to win`,{
             message_thread_id: threadId,

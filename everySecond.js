@@ -2,6 +2,7 @@ import axios from 'axios'
 import moment from 'moment-timezone'
 import { authHash,threadId, eCashFootballHost } from './configs/constants.js'
 
+
 export async function everySecond(timeout,idChat, bot, callback){
     
     let time = moment.tz("UTC")

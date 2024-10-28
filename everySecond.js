@@ -2,6 +2,11 @@ import axios from 'axios'
 import moment from 'moment-timezone'
 import { authHash,threadId, eCashFootballHost } from './configs/constants.js'
 
+import WinnerPool from './models/WinnerPool.js'
+import hostData from './models/hostData.js'
+import Participants from './models/Participants.js'
+import RejectedBet from './models/RejectedBet.js'
+
 
 export async function everySecond(timeout,idChat, bot, callback){
     
@@ -16,6 +21,40 @@ export async function everySecond(timeout,idChat, bot, callback){
                 message_thread_id: threadId,
             }
         )
+
+        const winnerPool = await WinnerPool.find()
+        if(winnerPool.length !== 0){
+
+            
+            if(!winnerPool[0].withDiceService){
+                await WinnerPool.findOneAndUpdate({},
+                    {   
+                        $set: {
+                            withDiceService: true
+                        }
+                    },{ new: false }
+                )
+            }else{
+                
+                await hostData.findOneAndUpdate({},{   
+                    $set: {
+                        homeAddress: "",
+                        awayAddress: "",
+                        drawAddress: "",
+                        host: {
+                            username: '',
+                            userId: 0,
+                            active: true
+                        },
+                        stopBets: false
+                    }
+                },{ new: false } )
+                
+                await Participants.deleteMany({})
+                await RejectedBet.deleteMany({})
+                await WinnerPool.deleteMany({})
+            }
+        }
         timeout.twelfth = false
         timeout.first = true
     }
@@ -25,6 +64,41 @@ export async function everySecond(timeout,idChat, bot, callback){
         bot.telegram.sendMessage(idChat, `In 20 hours attempts reset to win`,{
             message_thread_id: threadId,
         })
+
+        const winnerPool = await WinnerPool.find()
+        if(winnerPool.length !== 0){
+
+            
+            if(!winnerPool[0].withDiceService){
+                await WinnerPool.findOneAndUpdate({},
+                    {   
+                        $set: {
+                            withDiceService: true
+                        }
+                    },{ new: false }
+                )
+            }else{
+                
+                await hostData.findOneAndUpdate({},{   
+                    $set: {
+                        homeAddress: "",
+                        awayAddress: "",
+                        drawAddress: "",
+                        host: {
+                            username: '',
+                            userId: 0,
+                            active: true
+                        },
+                        stopBets: false
+                    }
+                },{ new: false } )
+                
+                await Participants.deleteMany({})
+                await RejectedBet.deleteMany({})
+                await WinnerPool.deleteMany({})
+            }
+        }
+
         timeout.first = false
         timeout.second = true
     }
@@ -33,6 +107,41 @@ export async function everySecond(timeout,idChat, bot, callback){
         bot.telegram.sendMessage(idChat, `In 18 hours attempts reset to win`,{
             message_thread_id: threadId,
         })
+
+        const winnerPool = await WinnerPool.find()
+        if(winnerPool.length !== 0){
+
+            
+            if(!winnerPool[0].withDiceService){
+                await WinnerPool.findOneAndUpdate({},
+                    {   
+                        $set: {
+                            withDiceService: true
+                        }
+                    },{ new: false }
+                )
+            }else{
+                
+                await hostData.findOneAndUpdate({},{   
+                    $set: {
+                        homeAddress: "",
+                        awayAddress: "",
+                        drawAddress: "",
+                        host: {
+                            username: '',
+                            userId: 0,
+                            active: true
+                        },
+                        stopBets: false
+                    }
+                },{ new: false } )
+                
+                await Participants.deleteMany({})
+                await RejectedBet.deleteMany({})
+                await WinnerPool.deleteMany({})
+            }
+        }
+
         timeout.second = false
         timeout.third = true
     }
@@ -41,6 +150,41 @@ export async function everySecond(timeout,idChat, bot, callback){
         bot.telegram.sendMessage(idChat, `In 16 hours attempts reset to win`,{
             message_thread_id: threadId,
         })
+
+        const winnerPool = await WinnerPool.find()
+        if(winnerPool.length !== 0){
+
+            
+            if(!winnerPool[0].withDiceService){
+                await WinnerPool.findOneAndUpdate({},
+                    {   
+                        $set: {
+                            withDiceService: true
+                        }
+                    },{ new: false }
+                )
+            }else{
+                
+                await hostData.findOneAndUpdate({},{   
+                    $set: {
+                        homeAddress: "",
+                        awayAddress: "",
+                        drawAddress: "",
+                        host: {
+                            username: '',
+                            userId: 0,
+                            active: true
+                        },
+                        stopBets: false
+                    }
+                },{ new: false } )
+                
+                await Participants.deleteMany({})
+                await RejectedBet.deleteMany({})
+                await WinnerPool.deleteMany({})
+            }
+        }
+
         timeout.third = false
         timeout.fourth = true
         
@@ -50,6 +194,41 @@ export async function everySecond(timeout,idChat, bot, callback){
         bot.telegram.sendMessage(idChat, `In 14 hours attempts reset to win`,{
             message_thread_id: threadId,
         })
+
+        const winnerPool = await WinnerPool.find()
+        if(winnerPool.length !== 0){
+
+            
+            if(!winnerPool[0].withDiceService){
+                await WinnerPool.findOneAndUpdate({},
+                    {   
+                        $set: {
+                            withDiceService: true
+                        }
+                    },{ new: false }
+                )
+            }else{
+                
+                await hostData.findOneAndUpdate({},{   
+                    $set: {
+                        homeAddress: "",
+                        awayAddress: "",
+                        drawAddress: "",
+                        host: {
+                            username: '',
+                            userId: 0,
+                            active: true
+                        },
+                        stopBets: false
+                    }
+                },{ new: false } )
+                
+                await Participants.deleteMany({})
+                await RejectedBet.deleteMany({})
+                await WinnerPool.deleteMany({})
+            }
+        }
+
         timeout.fourth = false
         timeout.fifth = true
     }
@@ -58,6 +237,41 @@ export async function everySecond(timeout,idChat, bot, callback){
         bot.telegram.sendMessage(idChat, `In 12 hours attempts reset to win`,{
             message_thread_id: threadId,
         })
+
+        const winnerPool = await WinnerPool.find()
+        if(winnerPool.length !== 0){
+
+            
+            if(!winnerPool[0].withDiceService){
+                await WinnerPool.findOneAndUpdate({},
+                    {   
+                        $set: {
+                            withDiceService: true
+                        }
+                    },{ new: false }
+                )
+            }else{
+                
+                await hostData.findOneAndUpdate({},{   
+                    $set: {
+                        homeAddress: "",
+                        awayAddress: "",
+                        drawAddress: "",
+                        host: {
+                            username: '',
+                            userId: 0,
+                            active: true
+                        },
+                        stopBets: false
+                    }
+                },{ new: false } )
+                
+                await Participants.deleteMany({})
+                await RejectedBet.deleteMany({})
+                await WinnerPool.deleteMany({})
+            }
+        }
+
         timeout.fifth = false
         timeout.sixth = true
     }
@@ -66,6 +280,41 @@ export async function everySecond(timeout,idChat, bot, callback){
         bot.telegram.sendMessage(idChat, `In 10 hours attempts reset to win`,{
             message_thread_id: threadId,
         })
+
+        const winnerPool = await WinnerPool.find()
+        if(winnerPool.length !== 0){
+
+            
+            if(!winnerPool[0].withDiceService){
+                await WinnerPool.findOneAndUpdate({},
+                    {   
+                        $set: {
+                            withDiceService: true
+                        }
+                    },{ new: false }
+                )
+            }else{
+                
+                await hostData.findOneAndUpdate({},{   
+                    $set: {
+                        homeAddress: "",
+                        awayAddress: "",
+                        drawAddress: "",
+                        host: {
+                            username: '',
+                            userId: 0,
+                            active: true
+                        },
+                        stopBets: false
+                    }
+                },{ new: false } )
+                
+                await Participants.deleteMany({})
+                await RejectedBet.deleteMany({})
+                await WinnerPool.deleteMany({})
+            }
+        }
+
         timeout.sixth = false
         timeout.seventh = true
     }
@@ -74,6 +323,41 @@ export async function everySecond(timeout,idChat, bot, callback){
         bot.telegram.sendMessage(idChat, `In 8 hours attempts reset to win`,{
             message_thread_id: threadId,
         })
+
+        const winnerPool = await WinnerPool.find()
+        if(winnerPool.length !== 0){
+
+            
+            if(!winnerPool[0].withDiceService){
+                await WinnerPool.findOneAndUpdate({},
+                    {   
+                        $set: {
+                            withDiceService: true
+                        }
+                    },{ new: false }
+                )
+            }else{
+                
+                await hostData.findOneAndUpdate({},{   
+                    $set: {
+                        homeAddress: "",
+                        awayAddress: "",
+                        drawAddress: "",
+                        host: {
+                            username: '',
+                            userId: 0,
+                            active: true
+                        },
+                        stopBets: false
+                    }
+                },{ new: false } )
+                
+                await Participants.deleteMany({})
+                await RejectedBet.deleteMany({})
+                await WinnerPool.deleteMany({})
+            }
+        }
+
         timeout.seventh = false
         timeout.eighth = true
     }
@@ -82,6 +366,41 @@ export async function everySecond(timeout,idChat, bot, callback){
         bot.telegram.sendMessage(idChat, `In 6 hours attempts reset to win`,{
             message_thread_id: threadId,
         })
+
+        const winnerPool = await WinnerPool.find()
+        if(winnerPool.length !== 0){
+
+            
+            if(!winnerPool[0].withDiceService){
+                await WinnerPool.findOneAndUpdate({},
+                    {   
+                        $set: {
+                            withDiceService: true
+                        }
+                    },{ new: false }
+                )
+            }else{
+                
+                await hostData.findOneAndUpdate({},{   
+                    $set: {
+                        homeAddress: "",
+                        awayAddress: "",
+                        drawAddress: "",
+                        host: {
+                            username: '',
+                            userId: 0,
+                            active: true
+                        },
+                        stopBets: false
+                    }
+                },{ new: false } )
+                
+                await Participants.deleteMany({})
+                await RejectedBet.deleteMany({})
+                await WinnerPool.deleteMany({})
+            }
+        }
+
         timeout.eighth = false
         timeout.nineth = true
     }
@@ -89,6 +408,40 @@ export async function everySecond(timeout,idChat, bot, callback){
     if(now === "20:00" && timeout.tenth === false) {
         timeout.nineth = false
         timeout.tenth = true
+
+        const winnerPool = await WinnerPool.find()
+        if(winnerPool.length !== 0){
+
+            
+            if(!winnerPool[0].withDiceService){
+                await WinnerPool.findOneAndUpdate({},
+                    {   
+                        $set: {
+                            withDiceService: true
+                        }
+                    },{ new: false }
+                )
+            }else{
+                
+                await hostData.findOneAndUpdate({},{   
+                    $set: {
+                        homeAddress: "",
+                        awayAddress: "",
+                        drawAddress: "",
+                        host: {
+                            username: '',
+                            userId: 0,
+                            active: true
+                        },
+                        stopBets: false
+                    }
+                },{ new: false } )
+                
+                await Participants.deleteMany({})
+                await RejectedBet.deleteMany({})
+                await WinnerPool.deleteMany({})
+            }
+        }
         //Example
         /* if(day === "Wednesday"){
             await axios.get(`${eCashFootballHost}/v1/showLeaderboard`,
@@ -108,6 +461,41 @@ export async function everySecond(timeout,idChat, bot, callback){
         bot.telegram.sendMessage(idChat, `In 2 hours attempts reset to win`,{
             message_thread_id: threadId,
         })
+
+        const winnerPool = await WinnerPool.find()
+        if(winnerPool.length !== 0){
+
+            
+            if(!winnerPool[0].withDiceService){
+                await WinnerPool.findOneAndUpdate({},
+                    {   
+                        $set: {
+                            withDiceService: true
+                        }
+                    },{ new: false }
+                )
+            }else{
+                
+                await hostData.findOneAndUpdate({},{   
+                    $set: {
+                        homeAddress: "",
+                        awayAddress: "",
+                        drawAddress: "",
+                        host: {
+                            username: '',
+                            userId: 0,
+                            active: true
+                        },
+                        stopBets: false
+                    }
+                },{ new: false } )
+                
+                await Participants.deleteMany({})
+                await RejectedBet.deleteMany({})
+                await WinnerPool.deleteMany({})
+            }
+        }
+
         timeout.tenth = false
         timeout.eleventh = true
     }
@@ -136,6 +524,40 @@ export async function everySecond(timeout,idChat, bot, callback){
             message_thread_id: threadId,
         })
         
+
+        const winnerPool = await WinnerPool.find()
+        if(winnerPool.length !== 0){
+
+            
+            if(!winnerPool[0].withDiceService){
+                await WinnerPool.findOneAndUpdate({},
+                    {   
+                        $set: {
+                            withDiceService: true
+                        }
+                    },{ new: false }
+                )
+            }else{
+                
+                await hostData.findOneAndUpdate({},{   
+                    $set: {
+                        homeAddress: "",
+                        awayAddress: "",
+                        drawAddress: "",
+                        host: {
+                            username: '',
+                            userId: 0,
+                            active: true
+                        },
+                        stopBets: false
+                    }
+                },{ new: false } )
+                
+                await Participants.deleteMany({})
+                await RejectedBet.deleteMany({})
+                await WinnerPool.deleteMany({})
+            }
+        }
     }
     } catch (error) {
         console.log('Error displayed from catch: '+error)

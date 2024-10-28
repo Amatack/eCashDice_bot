@@ -1,19 +1,23 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const dbConnect = () => {
-    const DB_URI = process.env.DB_URI || "mongodb://localhost:27017/eCashPlay"
-    mongoose.connect(DB_URI, {
-        dbName: "eCashPlay",
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    },(err, res)=>{
-        if(!err){
-            console.log("Successful connection to database")
-        }else{
-            console.log("Incorrect connection to database")
-        }
+const dbConnect = async () => {
+    const DB_URI = process.env.DB_URI || "mongodb://localhost:27017/eCashPlay";
+    
+    // Configuraciones adicionales de Mongoose
+    mongoose.set('strictQuery', false);
+
+    try {
+        // Conexión a la base de datos usando await
+        await mongoose.connect(DB_URI, {
+            dbName: "eCashPlay",
+            /* useNewUrlParser: true,
+            useUnifiedTopology: true */
+        });
+        console.log("Successful connection to database");
+    } catch (err) {
+        // Manejo de errores de conexión
+        console.error("Incorrect connection to database:", err);
     }
-    )
-}
+};
 
-export default dbConnect
+export default dbConnect;

@@ -200,7 +200,7 @@ bot.on(message("dice"), async (ctx) => {
             //}
             if(userReleasesInBd < 1){
                 if(dice.value === 1 ){
-                    await ctx.replyWithHTML(`${from.first_name} multiply x2 possible reward by paying 1 million Grumpy ($GRP) to this address:\n\n<code>ecash:qq5v4wmfhclzqur4wnt6phwxt2qpk6h9nyesy04fn0</code>`)
+                    await ctx.replyWithHTML(`${from.first_name} multiply x2 possible reward by paying 1 million Grumpy ($GRP) or 100 cachet (CACHET) to this address:\n\n<code>ecash:qq5v4wmfhclzqur4wnt6phwxt2qpk6h9nyesy04fn0</code>`)
                 }else{
                     const withAddress = await userAddresses.find({ tgId: from.id })
 

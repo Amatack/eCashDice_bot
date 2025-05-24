@@ -1,6 +1,6 @@
 import {Schema, model} from "mongoose";
 
-const dartsScoreScheme = new Schema(
+const dartsGameStateScheme = new Schema(
     {
         tgId:{
             type: Number,
@@ -17,17 +17,27 @@ const dartsScoreScheme = new Schema(
             required:  false,
             trim: true
         },
-        start: {
+        extraLife: {
             type: Boolean,
+            required:  true,
+            trim: true
+        },
+        phase: {
+            type: String,
             require: true,
             trim: true 
-        }
+        },
+        played: {
+            type: Boolean,
+            required: false,
+            trim: true
+        },
     },
     {
-        collection: "dartsScore",
+        collection: "dartsGameState",
         timestamps: false, //TODO createdAt, updatedAt
         versionKey: false
     }
 )
 
-export default model("DartsScoreScheme", dartsScoreScheme)
+export default model("DartsGameStateScheme", dartsGameStateScheme)

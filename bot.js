@@ -10,8 +10,8 @@ import Winner from './models/Winner.js'
 import {token, idChat, idChannel, smtpPassword, emailAddress, threadId } from './configs/constants.js'
 import userAddresses from './models/UserAddresses.js'
 import DiceGameMessages from './models/DiceGameMessages.js'
-import DartsScore from './models/DartsScore.js'
 import withRedeemingToken from "./models/withRedeemingToken.js";
+import DartsGameState from './models/DartsGameState.js'
 
 if (token === undefined) {
     throw new Error('BOT_TOKEN must be provided!')
@@ -47,7 +47,10 @@ setInterval(() => {
             //await smtp(smtpPassword, messageEmail, emailAddress)
             await Winner.deleteMany({})
             await Release.deleteMany({})
-            await DartsScore.deleteMany({})
+            await DartsGameState.updateMany(
+                { played: { $ne: false } },
+                { $set: { played: false } }
+                )
             await userAddresses.deleteMany({ address: { $exists: false } })
             await withRedeemingToken.deleteMany({})
 

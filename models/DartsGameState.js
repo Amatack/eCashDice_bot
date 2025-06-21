@@ -34,7 +34,7 @@ const dartsGameStateScheme = new Schema(
         },
     },
     {
-        collection: "dartsGameState",
+        collection: "dartGame_state",
         timestamps: false, //TODO createdAt, updatedAt
         versionKey: false
     }

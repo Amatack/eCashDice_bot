@@ -14,7 +14,7 @@ const RejectedBetScheme = new Schema(
         },
     },
     {
-        collection: "rejectedBet",
+        collection: "eCashBet_rejectedBet",
         timestamps: true, //TODO createdAt, updatedAt
         versionKey: false
     }

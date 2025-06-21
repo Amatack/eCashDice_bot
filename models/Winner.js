@@ -14,7 +14,7 @@ const WinnersScheme = new Schema(
         }
     },
     {
-        collection: "winners",
+        collection: "diceGame_winners",
         timestamps: false, //TODO createdAt, updatedAt
         versionKey: false
     }

@@ -14,7 +14,7 @@ const withRedeemingTokenScheme = new Schema(
         }
     },
     {
-        collection: "withRedeemingToken",
+        collection: "eCashBet_withRedeemingToken",
         timestamps: true, //TODO createdAt, updatedAt
         versionKey: false
     }

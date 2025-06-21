@@ -14,7 +14,7 @@ const diceGameMessagesScheme = new Schema(
         }
     },
     {
-        collection: "diceGameMessages",
+        collection: "diceGame_Messages",
         timestamps: true, //TODO createdAt, updatedAt
         versionKey: false
     }

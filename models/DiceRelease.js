@@ -14,7 +14,7 @@ const DiceReleaseScheme = new Schema(
         }
     },
     {
-        collection: "diceReleases",
+        collection: "diceGame_Releases",
         timestamps: false, //TODO createdAt, updatedAt
         versionKey: false
     }

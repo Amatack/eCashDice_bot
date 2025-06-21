@@ -19,7 +19,7 @@ const userAddressesScheme = new Schema(
         }
     },
     {
-        collection: "userAddresses",
+        collection: "communityChat_userAddresses",
         timestamps: false, //TODO createdAt, updatedAt
         versionKey: false
     }

@@ -48,7 +48,7 @@ const hostDataScheme = new Schema(
         }
     },
     {
-        collection: "hostData",
+        collection: "eCashBet_hostData",
         timestamps: false, //TODO createdAt, updatedAt
         versionKey: false
     }

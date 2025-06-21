@@ -24,7 +24,7 @@ const WinnerPoolScheme = new Schema(
         }
     },
     {
-        collection: "winnerPool",
+        collection: "eCashBet_winnerPool",
         timestamps: true, //TODO createdAt, updatedAt
         versionKey: false
     }

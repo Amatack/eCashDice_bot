@@ -23,7 +23,7 @@ const participantsScheme = new Schema(
         }
     },
     {
-        collection: "participants",
+        collection: "eCashBet_participants",
         timestamps: true, //TODO createdAt, updatedAt
         versionKey: false
     }

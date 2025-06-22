@@ -6,7 +6,6 @@ import {everySecond} from './everySecond.js'
 import { hoursLeft } from './hoursLeft.js'
 import {smtp} from './smtp.js'
 import Release from './models/DiceRelease.js'
-import Winner from './models/Winner.js'
 import {token, idChat, idChannel, smtpPassword, emailAddress, threadId } from './configs/constants.js'
 import userAddresses from './models/UserAddresses.js'
 import DiceGameMessages from './models/DiceGameMessages.js'
@@ -42,10 +41,8 @@ setInterval(() => {
         timeLeft = now
         if(now === "00:00" && timeoutTwelfth === false){
             let messageEmail = new String
-            const winners = await Winner.find()
-            winners.forEach(element => {if(element.address) (messageEmail = messageEmail + " " + element.address)})
+            
             //await smtp(smtpPassword, messageEmail, emailAddress)
-            await Winner.deleteMany({})
             await Release.deleteMany({})
             await DartsGameState.updateMany(
                 { played: { $ne: false } },
@@ -85,22 +82,6 @@ bot.on(message("text"), async (ctx) =>{
 
         const newUserAddress = new userAddresses(userAddress)
         await newUserAddress.save()
-    }
-    const winners = await Winner.find()
-    for(let i = 0; i < winners.length; i++){
-        if(winners[i].telegramId === from.id){
-            let split = ctx.message.text.split(" ")
-            split.forEach(async (element) => {
-                if(element.length === 48 && element.includes(word)){
-                    await Winner.findOneAndUpdate(
-                        { telegramId: from.id }
-                        ,{ $set: { address: element } },
-                        { new: true })
-                }
-                
-            });
-            
-        }
     }
 })
 
@@ -187,11 +168,6 @@ bot.on(message("dice"), async (ctx) => {
                 value: dice.value,
             })
         
-        const userWinner = {
-            telegramId: from.id
-        }
-        
-        const newWinner = new Winner(userWinner)
 
         bot.telegram.sendMessage(idChannel, `#id${from.id} \nname: ${from.first_name} \nusername: @${from.username} \nvalue: ${dice.value} `)
         try {
@@ -199,7 +175,6 @@ bot.on(message("dice"), async (ctx) => {
             
             //if(dice.value === 6 && userReleasesInBd < 1){
                 //setTimeout(() => ctx.reply("🎲 Congratulations, you have rolled a Six (6) on your first roll. \n \n You didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens. \n \n 👉 Reply to this message with your eToken:address and we will send you some Grumpy (GRP). \n \n ℹ️ If you don't have an eCash wallet that support eTokens, you can create one at https://cashtab.com web-wallet. \n \n ⚠️Note: After setting up your new wallet, please take the time to go to the ⚙️Settings menu to write down and store your 12 Word Seed Phrase. It acts as your Backup to your funds in case of loss of device. Keep this 12 Word Backup Phrase Safe and do not disclose it to anyone."), 3000)
-                //await newWinner.save()
             //}
             if(userReleasesInBd < 1){
                 if(dice.value === 1 ){
@@ -228,10 +203,6 @@ bot.on(message("dice"), async (ctx) => {
                     setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's reward!🏅 \n \nPlease reply to this message with your eCash (XEC) wallet address and admin @eKoush will reward you as soon as possible!"), 3000)
                 }else if(userAddress !== null && dice.value === 1){
                     setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's reward!🏅 \n \nYour address registered is\n"+userAddress.address+"\n\nAdmin @eKoush will reward you as soon as possible!"), 3000)
-                }else{
-                    
-                    
-                    await newWinner.save()
                 }
             }
 

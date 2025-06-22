@@ -11,6 +11,7 @@ import userAddresses from './models/UserAddresses.js'
 import DiceGameMessages from './models/DiceGameMessages.js'
 import withRedeemingToken from "./models/withRedeemingToken.js";
 import DartsGameState from './models/DartsGameState.js'
+import SlotGameWinner from './models/SlotGameWinner.js'
 
 if (token === undefined) {
     throw new Error('BOT_TOKEN must be provided!')
@@ -50,6 +51,7 @@ setInterval(() => {
                 )
             await userAddresses.deleteMany({ address: { $exists: false } })
             await withRedeemingToken.deleteMany({})
+            await SlotGameWinner.deleteMany({})
 
             bot.telegram.sendMessage(idChannel, `#RESET \nNew chance to win`)
         }

@@ -12,6 +12,7 @@ import DiceGameMessages from './models/DiceGameMessages.js'
 import withRedeemingToken from "./models/withRedeemingToken.js";
 import DartsGameState from './models/DartsGameState.js'
 import SlotGameWinner from './models/SlotGameWinner.js'
+import DiceMultiplier from './models/DiceMultiplier.js'
 
 if (token === undefined) {
     throw new Error('BOT_TOKEN must be provided!')
@@ -179,24 +180,53 @@ bot.on(message("dice"), async (ctx) => {
                 //setTimeout(() => ctx.reply("🎲 Congratulations, you have rolled a Six (6) on your first roll. \n \n You didn't win the Jackpot (3x One) but you will be rewarded some #Grumpy😾 eTokens. \n \n 👉 Reply to this message with your eToken:address and we will send you some Grumpy (GRP). \n \n ℹ️ If you don't have an eCash wallet that support eTokens, you can create one at https://cashtab.com web-wallet. \n \n ⚠️Note: After setting up your new wallet, please take the time to go to the ⚙️Settings menu to write down and store your 12 Word Seed Phrase. It acts as your Backup to your funds in case of loss of device. Keep this 12 Word Backup Phrase Safe and do not disclose it to anyone."), 3000)
             //}
             if(userReleasesInBd < 1){
+                const withAddress = await userAddresses.findOne({ tgId: from.id })
+                //Suggestion to enter address
+                if(!withAddress){
+                    ctx.replyWithHTML(`Welcome ${from.first_name}\n\nTo be able to receive rewards, please register your eCash address by using the /register command, followed by your address.\n\nExample:\n\n<code>/register ecash:address</code>`)
+                    const userAddress = {
+                        tgId: from.id
+                    }
+
+                    const newUserAddress = new userAddresses(userAddress)
+                    await newUserAddress.save()
+                    return
+                }
+
+                if(!withAddress.address){
+                    ctx.replyWithHTML(`Welcome ${from.first_name}\n\nTo be able to receive rewards, please register your eCash address by using the /register command, followed by your address.\n\nExample:\n\n<code>/register ecash:address</code>`)
+                    return
+                }
+                //The user has made 1 correct throw
                 if(dice.value === 1 ){
                     await ctx.replyWithHTML(`${from.first_name} multiply x2 possible reward by paying 1 million Grumpy ($GRP) or 100 cachet ($CACHET) to this address:\n\n<code>ecash:qq5v4wmfhclzqur4wnt6phwxt2qpk6h9nyesy04fn0</code>`)
-                }else{
-                    const withAddress = await userAddresses.find({ tgId: from.id })
-
-                    //Suggestion to enter address
-                    if(withAddress.length === 0 ){
-                        ctx.replyWithHTML(`Welcome ${from.first_name}\n\nTo be able to receive rewards, please register your eCash address by using the /register command, followed by your address.\n\nExample:\n\n<code>/register ecash:address</code>`)
-                        const userAddress = {
-                            tgId: from.id
-                        }
-
-                        const newUserAddress = new userAddresses(userAddress)
-                        await newUserAddress.save()
-                    }
                 }
             }
-            
+            //The user has made 2 correct throws
+            if(sucessfulDiceNumbers === 1 && dice.value === 1){
+                const withDiceMultiplier = await DiceMultiplier.find()
+
+                if(withDiceMultiplier.length === 0){
+                    const diceMultiplier = {
+                        tgId: from.id,
+                        multiplier: false
+                    }
+
+                    const newDiceMultiplier = new DiceMultiplier(diceMultiplier)
+                    await newDiceMultiplier.save()
+                }else{
+                    //empty object to modify the first document found 
+                    await DiceMultiplier.findOneAndUpdate({},
+                        {   
+                            $set: {
+                                tgId: from.id,
+                                multiplier: false,
+                            }
+                        },{ new: false }
+                    )
+                }
+            }
+            //The user has made 3 correct throws
             if(sucessfulDiceNumbers === 2){
 
                 const userAddress = await userAddresses.findOne({ tgId: from.id });

@@ -123,7 +123,6 @@ bot.on(message("dice"), async (ctx) => {
             if(user.value === 1){
                 sucessfulDiceNumbers++
             }
-
             if(userReleasesInBd === 3){
                 try {
                     const allDiceGameMessages = await DiceGameMessages.find()
@@ -131,6 +130,7 @@ bot.on(message("dice"), async (ctx) => {
                     const {message_id: message_id2} = await ctx.reply("Oh-Oh, you already rolled for today. You can try again tomorrow. Use the /time command to check how many hours are left for your next chance to win!",{
                         reply_to_message_id: message_id,
                     })
+                    setTimeout(async () => {await ctx.deleteMessage(message_id)}, 3000)
                     if(allDiceGameMessages.length === 0){
 
                         const diceGameMessages = DiceGameMessages({
@@ -142,7 +142,6 @@ bot.on(message("dice"), async (ctx) => {
                         
                     }else{
                         
-                        await ctx.deleteMessage(allDiceGameMessages[0].overGameMessageId)
                         //empty object to modify the first document found 
                         await DiceGameMessages.findOneAndUpdate({},
                             {   
@@ -152,9 +151,10 @@ bot.on(message("dice"), async (ctx) => {
                                 }
                             },{ new: false }
                         )
+                        await ctx.deleteMessage(allDiceGameMessages[0].overGameMessageId)
                     }
-
-                    setTimeout(() => ctx.deleteMessage(message_id), 3000)
+                    
+                    
                 } catch (error) {
                     console.error("Error from condition userReleasesInBd === 3: ", error)
                 }
@@ -211,7 +211,7 @@ bot.on(message("dice"), async (ctx) => {
             await newRelease.save()
             
         } catch (error) {
-            console.log("Error saving to database")
+            console.error("Error saving to database")
         }
     }
 })

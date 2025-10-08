@@ -6,7 +6,7 @@ import {everySecond} from './everySecond.js'
 import { hoursLeft } from './hoursLeft.js'
 import {smtp} from './smtp.js'
 import Release from './models/DiceRelease.js'
-import {token, idChat, idChannel, smtpPassword, emailAddress, threadId } from './configs/constants.js'
+import {token, idChat, idChannel, smtpPassword, emailAddress, threadId, mainAdmin,multAddrPrimary,multAddrSecondary, groupName } from './configs/constants.js'
 import userAddresses from './models/UserAddresses.js'
 import DiceGameMessages from './models/DiceGameMessages.js'
 import withRedeemingToken from "./models/withRedeemingToken.js";
@@ -199,43 +199,66 @@ bot.on(message("dice"), async (ctx) => {
                 }
                 //The user has made 1 correct throw
                 if(dice.value === 1 ){
-                    await ctx.replyWithHTML(`${from.first_name} multiply x2 possible reward by paying 1 million Grumpy ($GRP) or 100 cachet ($CACHET) to this address:\n\n<code>ecash:qq5v4wmfhclzqur4wnt6phwxt2qpk6h9nyesy04fn0</code>`)
-                }
-            }
-            //The user has made 2 correct throws
-            if(sucessfulDiceNumbers === 1 && dice.value === 1){
-                const withDiceMultiplier = await DiceMultiplier.find()
+                    // Determine assigned address for this user's multiplier session (max 2 concurrent sessions)
+                    let assignedAddress
+                    const activeSessions = await DiceMultiplier.find({ multiplier: false })
+                    const others = activeSessions.filter(s => s.tgId !== from.id)
 
-                if(withDiceMultiplier.length === 0){
-                    const diceMultiplier = {
-                        tgId: from.id,
-                        multiplier: false
+                    if (others.length === 0) {
+                        assignedAddress = multAddrPrimary
+                    } else if (others.length === 1) {
+                        assignedAddress = multAddrSecondary
+                    } else {
+                        // Two sessions already pending; ask the user to try later
+                        await ctx.replyWithHTML(`There are currently two players with an active multiplier attempt. Please try again in a moment.`)
+                        assignedAddress = null
                     }
 
-                    const newDiceMultiplier = new DiceMultiplier(diceMultiplier)
-                    await newDiceMultiplier.save()
-                }else{
-                    //empty object to modify the first document found 
-                    await DiceMultiplier.findOneAndUpdate({},
-                        {   
-                            $set: {
-                                tgId: from.id,
-                                multiplier: false,
-                            }
-                        },{ new: false }
-                    )
+                    if (assignedAddress) {
+                        await DiceMultiplier.findOneAndUpdate(
+                            { tgId: from.id },
+                            { $set: { tgId: from.id, multiplier: false, address: assignedAddress } },
+                            { new: false, upsert: true }
+                        )
+                        await ctx.replyWithHTML(`${from.first_name} multiply x2 possible reward by paying 1 million Grumpy ($GRP) or 100 cachet ($CACHET) to this address:\n\n<code>${assignedAddress}</code>`)
+                    }
                 }
             }
-            //The user has made 3 correct throws
-            if(sucessfulDiceNumbers === 2){
-
-                const userAddress = await userAddresses.findOne({ tgId: from.id });
-                
-                if(userAddress === null && dice.value === 1){
-                    setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's reward!🏅 \n \nPlease reply to this message with your eCash (XEC) wallet address and admin @eKoush will reward you as soon as possible!"), 3000)
-                }else if(userAddress !== null && dice.value === 1){
-                    setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's reward!🏅 \n \nYour address registered is\n"+userAddress.address+"\n\nAdmin @eKoush will reward you as soon as possible!"), 3000)
+            if(sucessfulDiceNumbers === 1 && dice.value !== 1){
+                try {
+                    // User missed the second attempt: free their multiplier slot (remove any lingering docs)
+                    await DiceMultiplier.deleteOne({ tgId: from.id })
+                } catch (error) {
+                    console.error('Error trying to delete multiplier doc after second miss: '+ error)
                 }
+            }
+            //The user makes one successful throw and misses the second one.
+            if(sucessfulDiceNumbers === 2 && dice.value === 1){
+                setTimeout( () => ctx.reply("🎉 Congratulations! \n \nYou have won the 🎲 Dice Game's reward!🏅 \n \nPlease reply to this message with your eCash (XEC) wallet address and admin @eKoush will reward you as soon as possible!"), 3000)
+                // --- Console: Prize calculation and winner's address ---
+                try {
+                    const multiplierDoc = await DiceMultiplier.findOne({ tgId: from.id })
+                    const appliedMultiplier = !!(multiplierDoc && multiplierDoc.tgId === from.id && multiplierDoc.multiplier === true)
+                    const xecPrize = appliedMultiplier ? 100000 : 50000
+
+                    const winnerAddrDoc = await userAddresses.findOne({ tgId: from.id })
+                    if (winnerAddrDoc && winnerAddrDoc.address) {
+                        await bot.telegram.sendMessage(mainAdmin, `🎲 Dice Winner!\n\nAmount: <code>${xecPrize}</code> XEC\nUser: ${from.first_name}\nAddress: <code>${winnerAddrDoc.address}</code>\nLink to winning message: https://t.me/${groupName}/${threadId}/${message_id}\n<b>bip21:</b> <a href="https://cashtab.com/#/send?bip21=${winnerAddrDoc.address}?amount=${xecPrize}&op_return_raw=04007461624c6d436f6e67726174756c6174696f6e73206f6e2074686520446963652047616d6520f09f8eb22057696e2120506c6179207769746820667265652043616368657420746f6b656e7320616e642077696e2024584543206f6e20742e6d652f6543617368506c617920e299a6efb88f">payment url</a>`,{
+                            parse_mode: "HTML",
+                        })
+                        // Clear multiplier session after awarding (remove any lingering docs)
+                        await DiceMultiplier.deleteOne({ tgId: from.id })
+                    } else {
+                        console.log('[WINNER] eCash address: not found for this user')
+                    }
+                } catch (err) {
+                    console.error('Error getting winner info', err)
+                }
+            }
+            //The user makes two successful throw and misses the third one.
+            if(sucessfulDiceNumbers === 2 && dice.value !== 1){
+                // Game over without win; free any pending multiplier slot (remove any lingering docs)
+                await DiceMultiplier.deleteOne({ tgId: from.id })
             }
 
             await newRelease.save()

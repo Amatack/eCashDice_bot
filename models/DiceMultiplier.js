@@ -11,6 +11,12 @@ const DiceMultiplierScheme = new Schema(
         multiplier:{
             type: Boolean,
             required: true
+        },
+        // Assigned eCash address used for the multiplier payment flow
+        address: {
+            type: String,
+            required: false,
+            trim: true
         }
     },
     {
